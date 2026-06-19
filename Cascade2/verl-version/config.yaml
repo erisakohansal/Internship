@@ -1,0 +1,59 @@
+# if_rl_config.yaml
+defaults:
+  - ppo_trainer
+  - _self_
+
+data:
+  train_files: ./data/if_rl_train.parquet # ???
+  train_batch_size: 128 
+  prompt_key: prompt # ???
+  max_prompt_length: 5000      
+  max_response_length: 4000     
+
+actor_rollout_ref:
+  hybrid_engine: true # equivalent of colocate, + this is available in synchronous style execution 
+  model:
+    path: Qwen/Qwen2.5-1.5B-Instruct     
+  actor:
+    use_importance_sampling: false  
+    loss_type: dapo             
+    loss_agg_mode: "token-mean"
+    clip_ratio_low: 0.2          
+    clip_ratio_high: 0.28        
+    ppo_mini_batch_size: 2048
+    ppo_micro_batch_size_per_gpu: 1  
+    ppo_epochs: 1 
+    optim:                 
+      lr: 3e-6                    
+      betas: [0.9, 0.95]
+  rollout:
+    temperature: 1.0            
+    top_p: 1.0                  
+    n: 16                        
+    name: vllm
+    gpu_memory_utilization: 0.25 
+    max_model_len: 9000          
+
+algorithm:
+  adv_estimator: grpo
+  use_kl_in_reward: false        # your beta=0.0
+  filter_groups: # dynamic sampling
+    enable: True
+    metric: acc # score / seq_reward / seq_final_reward / ... which metric? sequence reward???
+    max_num_gen_batches: 10 # Non-positive values mean no upper limit???
+
+reward_model:
+  reward_manager: custom_overlong
+
+custom_reward_function:
+  path: ./reward.py
+  name: if_reward_fn        # your make_if_reward_fn
+
+trainer:
+  max_steps: 180                 # your max_steps
+  save_freq: 10                   # your save_steps=1
+  default_local_dir: ./if_rl_checkpoints   # your output_dir
+  project_name: IF-RL
+  experiment_name: if_rl_run     # your run_name
+  logger: ['wandb']
+  n_gpus_per_node: 1

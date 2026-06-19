@@ -1,0 +1,150 @@
+# =========================
+# Python environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
+
+
+# =========================
+# Python cache / build files
+# =========================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+
+# =========================
+# Secrets / local config
+# =========================
+.env
+*.env
+.env.*
+!.env.example
+
+
+# =========================
+# Editor / OS files
+# =========================
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*.save
+.gitignore.swp
+.gitignore.save
+
+
+# =========================
+# Logs
+# =========================
+logs/
+**/logs/
+*.log
+
+
+# =========================
+# Model weights / checkpoint files
+# =========================
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+
+
+# =========================
+# Checkpoint folders anywhere
+# =========================
+checkpoints/
+*_checkpoints/
+*-checkpoints/
+checkpoint-*/
+checkpoint*/
+**/checkpoints/
+**/*_checkpoints/
+**/*-checkpoints/
+**/checkpoint-*/
+**/checkpoint*/
+
+
+# =========================
+# IF-RL checkpoints / saved model folders anywhere
+# =========================
+Cascade2/IF-RL_checkpoints/
+Cascade2/IF-RL-Binary/
+Cascade2/IF-RL-Binary_checkpoints/
+
+Cascade2/TRL-version/IF-RL/
+Cascade2/TRL-version/IF-RL_checkpoints/
+Cascade2/TRL-version/IF-RL-Binary/
+Cascade2/TRL-version/IF-RL-Binary_checkpoints/
+Cascade2/TRL-version/IF-RL-Binary-systemprompt_checkpoints/
+Cascade2/TRL-version/IF-RL-Fraction/
+Cascade2/TRL-version/IF-RL-Fraction_checkpoints/
+
+
+# =========================
+# Specific Ablations outputs
+# =========================
+Ablations/grpo_Qwen25_15B_gsm8k_iterations2/
+Ablations/grpo_Qwen25_15B_gsm8k_iterations2_checkpoints/
+Ablations/rloo_Qwen25_15B_gsm8k_iterations2/
+Ablations/rloo_Qwen25_15B_gsm8k_iterations2_checkpoints/
+
+
+# =========================
+# Training / evaluation outputs
+# =========================
+eval/
+evals/
+evaluations/
+results/
+outputs/
+runs/
+wandb/
+**/eval/
+**/evals/
+**/evaluations/
+**/results/
+**/outputs/
+**/runs/
+**/wandb/
+
+
+# =========================
+# Optional generated debug text files
+# Keep this specific. Do NOT ignore all *.txt
+# because requirements.txt would be ignored.
+# =========================
+debug*.txt
+*_debug.txt
+*_debug_*.txt
+if_reward*.txt
+
+
+# =========================
+# Large datasets / generated data
+# Uncomment only if these are generated or too large
+# =========================
+# data/
+# datasets/
+# *.jsonl
+# *.parquet
+# *.csv
