@@ -28,8 +28,8 @@ class FormatData:
         "ro", # romanian
         "uk", # ukrainian  (y).
         # chinese is zh
-        "zh-cn", # simplified  (y).
-        "zh-tw", # traditional (y).
+        "zh-cn", # simplified  
+        "zh-tw", # traditional 
         "ja", # japanese   (y).
         "ko", # korean     (y).
         "vi", # vietnamese (y).
@@ -55,22 +55,28 @@ class FormatData:
     You are not allowed to use any tools.
     """ 
 
-    languages = []
+    dataset_languages = []
+    filtered_languages = []
 
     @staticmethod
-    def is_supported_language(example):
+    def is_supported_language(example):        
+        for dict_kw in example['kwargs']:
 
-        value = example.get("language")
-        if value is None:
-            return True
-        
-        normalized = str(value).strip().lower()
-        if normalized in FormatData.SUPPORTED_LANGUAGES:
-            FormatData.languages.append(normalized)
-            return True
-        
-        return False
+            if not isinstance(dict_kw, dict):
+                continue
 
+            if "language" in dict_kw:
+                value = dict_kw["language"]  
+                assert type(value) == str and len(value) == 2              
+                normalized = str(value).strip().lower()
+                FormatData.dataset_languages.append(normalized)
+                if normalized not in FormatData.SUPPORTED_LANGUAGES:
+                    return False
+                
+                FormatData.filtered_languages.append(normalized)
+            
+        return True
+    
     @staticmethod
     def format_data_if(data, idx):
         # https://verl.readthedocs.io/en/latest/preparation/prepare_data.html
@@ -266,14 +272,15 @@ class FormatData:
             split="train",
         )
         print("Dataset columns : ", data.column_names)
-        print("Raw dataset size : ", data.size)
+        print("Raw dataset size : ", len(data))
 
-        for dict_kw in data['kwargs']:
-            if "language" in dict_kw.keys():
-                data = data.filter(FormatData.is_supported_language)
+        data = data.filter(FormatData.is_supported_language)
 
-        print("All available languages in the dataset: ", set(FormatData.languages))
-        print("All supported languages by Qwen2.5-1.5B-Instruct: ", FormatData.SUPPORTED_LANGUAGES)
+        print("Filtered dataset size : ", len(data))
+
+        print("All available languages in the dataset: ", len(set(FormatData.dataset_languages)), set(FormatData.dataset_languages))
+        print("All supported languages by Qwen2.5-1.5B-Instruct: ", len(FormatData.SUPPORTED_LANGUAGES),  FormatData.SUPPORTED_LANGUAGES)
+        print("All filtered languages : ", len(set(FormatData.filtered_languages)), set(FormatData.filtered_languages))
 
         dataset = data.map(
             FormatData.format_data_if,
@@ -290,6 +297,7 @@ class FormatData:
         dataset.to_parquet(os.path.join(local_dir, 'train.parquet'))
         return dataset
 
-
 if __name__ == "__main__":
+    # Uncomment one of the following:
     FormatData.format_dataset_RL_Cascade2(config="IF-RL")
+    # test_IF_RL_config()

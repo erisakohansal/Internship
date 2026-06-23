@@ -4,9 +4,9 @@ defaults:
   - _self_
 
 data:
-  train_files: ./data/if_rl_train.parquet # ???
+  train_files: IF-RL-train.parquet 
   train_batch_size: 128 
-  prompt_key: prompt # ???
+  prompt_key: prompt 
   max_prompt_length: 5000      
   max_response_length: 4000     
 
@@ -39,21 +39,29 @@ algorithm:
   use_kl_in_reward: false        # your beta=0.0
   filter_groups: # dynamic sampling
     enable: True
-    metric: acc # score / seq_reward / seq_final_reward / ... which metric? sequence reward???
-    max_num_gen_batches: 10 # Non-positive values mean no upper limit???
+    metric: acc # score / seq_reward / seq_final_reward / ... 
+    max_num_gen_batches: 10 
 
-reward_model:
-  reward_manager: custom_overlong
-
+reward:
+  reward_manager:
+    name: dapo
+  reward_kwargs:
+    max_resp_len: 4000
+    overlong_buffer_cfg:
+      enable: true
+      len: 0
+      penalty_factor: 1.0
+      log: true
+      
 custom_reward_function:
   path: ./reward.py
-  name: if_reward_fn        # your make_if_reward_fn
+  name: if_reward_fn       
 
 trainer:
-  max_steps: 180                 # your max_steps
-  save_freq: 10                   # your save_steps=1
-  default_local_dir: ./if_rl_checkpoints   # your output_dir
+  max_steps: 180                
+  save_freq: 10                   
+  default_local_dir: ./if_rl_verl_binary_checkpoints   
   project_name: IF-RL
-  experiment_name: if_rl_run     # your run_name
+  experiment_name: if_rl_verl    
   logger: ['wandb']
   n_gpus_per_node: 1
