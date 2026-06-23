@@ -67,6 +67,7 @@ logs/
 *.ckpt
 *.bin
 *.safetensors
+*.parquet
 
 
 # =========================
@@ -99,6 +100,8 @@ Cascade2/TRL-version/IF-RL-Binary-systemprompt_checkpoints/
 Cascade2/TRL-version/IF-RL-Fraction/
 Cascade2/TRL-version/IF-RL-Fraction_checkpoints/
 
+Cascade2/verifiable-instructions
+
 
 # =========================
 # Specific Ablations outputs
@@ -107,7 +110,8 @@ Ablations/grpo_Qwen25_15B_gsm8k_iterations2/
 Ablations/grpo_Qwen25_15B_gsm8k_iterations2_checkpoints/
 Ablations/rloo_Qwen25_15B_gsm8k_iterations2/
 Ablations/rloo_Qwen25_15B_gsm8k_iterations2_checkpoints/
-
+Ablations/rloo_Qwen25_15B_gsm8k_iterations4/
+Ablations/rloo_Qwen25_15B_gsm8k_iterations4_checkpoints/
 
 # =========================
 # Training / evaluation outputs

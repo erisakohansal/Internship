@@ -33,4 +33,4 @@ if __name__=="__main__":
     # os.environ["WANDB_RESUME"]= "must"
 
     instruct_model = "Qwen/Qwen2.5-1.5B-Instruct" # "LiquidAI/LFM2.5-1.2B-Instruct"
-    rloo_(model=instruct_model, dataset_name="gsm8k", model_name="Qwen25_15B_gsm8k_iterations2")
+    rloo_(model=instruct_model, dataset_name="gsm8k", model_name="Qwen25_15B_gsm8k_iterations4")

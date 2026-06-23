@@ -10,6 +10,9 @@ type_agent_ref = []
 agents = []
 tools = []
 parallel_tool_calls = []
+temperature = []
+strict_ = []
+fields_in_tools = []
 
 environment_name = []
 category = []
@@ -17,6 +20,7 @@ schema_type = []
 schema_str = []
 schema_fields_count = []
 template_metadata_output_regex = []
+languages = []
 
 
 SYSTEM_PROMPT_IF = """
@@ -45,7 +49,10 @@ def format_data_if(data):
     for elem in data['instruction_id_list']:
         instruction_id_list.append(elem)
     """
-        
+    global languages
+    for kw in data['kwargs']:
+        if kw and "language" in kw.keys():
+            languages.append(kw["language"])
     res = {
         'prompt' : [
             {'role': 'system', 'content': SYSTEM_PROMPT_IF},
@@ -55,7 +62,6 @@ def format_data_if(data):
         'kwargs': data['kwargs'],
     }
     return res
-
 
 def format_data_multi_domain(data): # specify the regex pattern here with hydra
     # some tests
@@ -93,6 +99,27 @@ def format_data_multi_domain(data): # specify the regex pattern here with hydra
                 assert isinstance(v, str) and v.strip() != "", f"Option value for key '{k}' is not a non-empty string"
 
 
+    if data['agent_ref']['name'].strip() == 'workplace_assistant_simple_agent':
+        global parallel_tool_calls, temperature, strict_, fields_in_tools
+        parallel_tool_calls.append(data['responses_create_params'].get("parallel_tool_calls"))
+        temperature.append(data['responses_create_params'].get("temperature"))
+        assert len(data['responses_create_params']['input']) == 2
+        # print(data['responses_create_params']['input'])
+        if data['responses_create_params']['tools'] and len(data['responses_create_params']['input']) > 2:
+            print("multi turn")
+            return
+
+        for tool in data['responses_create_params']['tools']:
+            strict_.append(tool.get("strict"))
+            tool_keys = list(tool.keys())
+            # print(type(tool_keys))
+            for elem in ["type", "name", "description", "parameters"]:
+                tool_keys.remove(elem)
+
+            fields_in_tools.extend(tool_keys)
+        
+
+
     res = {
         'prompt' : [
             {'role': 'system', 'content': SYSTEM_PROMPT_IF},
@@ -125,7 +152,7 @@ def format_dataset_RL_Cascade2(config="IF-RL") -> Dataset:
         config,
         split="train",
     )
-    print(data[0].keys())
+    print(data.column_names)
 
     match config:
         case "IF-RL": dataset = data.map(format_data_if, remove_columns=data.column_names, load_from_cache_file=False)
@@ -159,6 +186,12 @@ def format_dataset_RL_Cascade2(config="IF-RL") -> Dataset:
     print("schema_str types:", len(set(schema_str)))
     print("schema_fields_count types:", set(schema_fields_count)) 
     """
+
+    print("languages : ", set(languages))
+    print("parallel_tool_calls : ", set(parallel_tool_calls))
+    print("temperature : ", set(temperature))
+    print("strict : ", set(strict_))
+    print("remaining fields : ", set(fields_in_tools))
 
     return dataset
 

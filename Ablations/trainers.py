@@ -48,7 +48,7 @@ def rloo_(model, dataset_name, model_name):
         # fp16=False,                     # not an argument of RLOOConfig, it's an argument of TrainingArguments from transformers library (its parent)
         bf16=True,
         # beta=0.5,
-        num_iterations=2, 
+        num_iterations=4, 
         
         report_to="wandb", 
         run_name="RLOO "+model_name,
