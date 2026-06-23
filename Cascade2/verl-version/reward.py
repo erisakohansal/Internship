@@ -5,12 +5,18 @@ import json
 # in verl the reward function is called once per generated response as opposed to trl where it's called on the whole batch
 # https://verl.readthedocs.io/en/latest/preparation/reward_function.html
 
+counter = 0
+debug_every = 20480*3
+
 def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     """
     solution_str : decoded model response
     extra_info : dataset metadata
     the reward manager detokenizes the response before calling the scoring function.
     """
+    global counter, debug_every
+    should_debug = counter % debug_every == 0
+
     print_to_terminal = extra_info['print_to_terminal']
     debug_path = extra_info['debug_path']
     max_completion_length = extra_info['max_compeltion_length']
@@ -69,8 +75,10 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     if should_debug:
         log("is_following_list:", is_following_list)
         log("Final reward:", reward)
+    
+    counter += 1
 
-    return reward
+    return {"reward": reward, "acc": reward}  # binary, so acc == reward here
 
 
 def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
