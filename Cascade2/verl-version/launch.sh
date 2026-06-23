@@ -1,42 +1,61 @@
-# my_grpo_config.yaml
-defaults:
-  - ppo_trainer    # inherits ALL defaults from verl's base config
-  - _self_         # your overrides come after
+#!/bin/bash
 
-# --- only the things you actually change ---
+export CUDA_VISIBLE_DEVICES=1
+export HYDRA_FULL_ERROR=1
 
-data:
-  train_files: ./data/gsm8k_train.parquet
-  val_files: ./data/gsm8k_val.parquet
-  prompt_key: prompt
-  max_prompt_length: 512
-  max_response_length: 1024
-  train_batch_size: 256
-
-actor_rollout_ref:
-  model:
-    path: Qwen/Qwen2.5-1.5B
-  actor:
-    loss_type: grpo           # or dapo
-    ppo_mini_batch_size: 256
-    ppo_micro_batch_size_per_gpu: 8
-  rollout:
-    temperature: 1.0
-    n: 8                      # number of samples per prompt (the G in GRPO)
-
-algorithm:
-  adv_estimator: grpo
-
-reward_model:
-  enable: false               # using custom reward fn instead
-
-custom_reward_function:
-  path: ./reward_fn.py
-  name: compute_reward
-
-trainer:
-  max_steps: 1000
-  project_name: my_project
-  experiment_name: qwen2.5_grpo_gsm8k
-  logger: ['wandb']
-  n_gpus_per_node: 4
+.venv/bin/python3 -m verl.trainer.main_ppo \
+  data.train_files=IF-RL-train.parquet \
+  data.val_files=IF-RL-train.parquet \
+  data.train_batch_size=2048 \
+  data.prompt_key=prompt \
+  data.max_prompt_length=5000 \
+  data.max_response_length=4000 \
+  actor_rollout_ref.hybrid_engine=true \
+  actor_rollout_ref.model.path=Qwen/Qwen2.5-1.5B-Instruct \
+  actor_rollout_ref.model.use_remove_padding=true \
+  actor_rollout_ref.model.enable_gradient_checkpointing=true \
+  actor_rollout_ref.actor.use_kl_loss=false \
+  actor_rollout_ref.actor.clip_ratio_low=0.2 \
+  actor_rollout_ref.actor.clip_ratio_high=0.28 \
+  actor_rollout_ref.actor.loss_agg_mode=token-mean \
+  actor_rollout_ref.actor.ppo_mini_batch_size=2048 \
+  actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1 \
+  actor_rollout_ref.actor.ppo_epochs=1 \
+  actor_rollout_ref.actor.entropy_coeff=0.0 \
+  actor_rollout_ref.actor.optim.lr=3e-6 \
+  actor_rollout_ref.actor.optim.betas='[0.9,0.95]' \
+  actor_rollout_ref.rollout.name=vllm \
+  actor_rollout_ref.rollout.temperature=1.0 \
+  actor_rollout_ref.rollout.top_p=1.0 \
+  actor_rollout_ref.rollout.top_k=-1 \
+  actor_rollout_ref.rollout.n=16 \
+  actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=1 \
+  actor_rollout_ref.rollout.gpu_memory_utilization=0.25 \
+  actor_rollout_ref.rollout.max_model_len=9000 \
+  algorithm.adv_estimator=grpo \
+  algorithm.use_kl_in_reward=false \
+  algorithm.rollout_correction.rollout_is=null \
+  algorithm.rollout_correction.rollout_rs=null \
+  algorithm.rollout_correction.bypass_mode=false \
+  algorithm.rollout_correction.loss_type=ppo_clip \
+  +algorithm.filter_groups.enable=true \
+  +algorithm.filter_groups.metric=acc \
+  +algorithm.filter_groups.max_num_gen_batches=10 \
+  reward.reward_manager.name=dapo \
+  +reward.reward_kwargs.max_resp_len=4000 \
+  +reward.reward_kwargs.overlong_buffer_cfg.enable=true \
+  +reward.reward_kwargs.overlong_buffer_cfg.len=512 \
+  +reward.reward_kwargs.overlong_buffer_cfg.penalty_factor=1.0 \
+  +reward.reward_kwargs.overlong_buffer_cfg.log=true \
+  custom_reward_function.path=./reward.py \
+  custom_reward_function.name=if_reward_fn \
+  trainer.total_training_steps=180 \
+  trainer.save_freq=10 \
+  trainer.val_before_train=false \
+  trainer.test_freq=-1 \
+  trainer.default_local_dir=./if_rl_verl_binary_checkpoints \
+  trainer.project_name=if_rl_verl_binary \
+  trainer.experiment_name=if_rl_verl_binary \
+  trainer.logger='["wandb"]' \
+  trainer.nnodes=1 \
+  trainer.n_gpus_per_node=1

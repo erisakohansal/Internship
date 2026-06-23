@@ -1,6 +1,7 @@
 from verifiable_instructions import instructions_registry
 import re
 import json
+from dataset import FormatData
 
 # in verl the reward function is called once per generated response as opposed to trl where it's called on the whole batch
 # https://verl.readthedocs.io/en/latest/preparation/reward_function.html
@@ -36,6 +37,8 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
 
     for instruction_id, kw in zip(instr_list, kwarg_list):
         try:
+            if "language" in kw:
+                assert kw["language"] in FormatData.SUPPORTED_LANGUAGES
             instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
             instruction = instruction_cls(instruction_id)
 
