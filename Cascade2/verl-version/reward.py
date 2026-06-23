@@ -1,5 +1,6 @@
 from verifiable_instructions import instructions_registry
 import re
+import json
 
 # in verl the reward function is called once per generated response as opposed to trl where it's called on the whole batch
 # https://verl.readthedocs.io/en/latest/preparation/reward_function.html
@@ -22,71 +23,92 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
         with open(debug_path, "a", encoding="utf-8") as f:
             print(*args, **print_kwargs, file=f)
 
-    instr_list = extra_info['instruction_id_list']
-    kwarg_list = extra_info['kwargs']
+    instr_list = extra_info.get('instruction_id_list', [])
+    kwarg_list = extra_info.get('kwargs', [])
 
-    # A completion is "overlong" only if it hit the limit AND never emitted EOS
-    # i.e. it was forcibly truncated, not a natural finish at exactly max length
-    # is_overlong = (
-    #     len(ids) >= max_completion_length
-    #     and eos_id not in ids
-    # )
+    is_following_list = []
 
-    # if is_overlong:
-    #     if should_debug:
-    #         log(f"[overlong] length={len(ids)}, no EOS -> reward=0.0")
+    for instruction_id, kw in zip(instr_list, kwarg_list):
+        try:
+            instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
+            instruction = instruction_cls(instruction_id)
 
-    #     return 0.0
+            if kw is None:
+                kw = {}
 
+            filtered_kwargs = {
+                k: v for k, v in kw.items()
+                if v is not None
+            }
+
+            instruction.build_description(**filtered_kwargs)
+            followed = instruction.check_following(solution_str)
+            followed = bool(followed)
+            is_following_list.append(followed)
+
+            if should_debug:
+                log("Instruction:", instruction_id)
+                log("kwargs:", filtered_kwargs)
+                log("Followed:", followed)
+                log("Reward contribution:", int(followed))
+
+        except Exception as e:
+            log(f"Error processing instruction {instruction_id} with kwargs {kw}: {e}")
+            log("The corresponding completion was:")
+            log(solution_str)
+            is_following_list.append(False)
+
+    if extra_info.get('reward_mode') == "binary":
+        reward = float(all(is_following_list))
     else:
-        is_following_list = []
+        reward = float(
+            sum(is_following_list) / len(is_following_list)
+            if is_following_list else 0.0
+        )
 
-        for instruction_id, kw in zip(instr_list, kwarg_list):
+    if should_debug:
+        log("is_following_list:", is_following_list)
+        log("Final reward:", reward)
+
+    return reward
+
+
+def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
+    # should extract whats inside <tool_call> tags as the provided answer and compare to the ground_truth
+    pattern = re.compile(r"<tool_call\s*>(.*?)</tool_call>", re.IGNORECASE | re.DOTALL)
+    matches = pattern.findall(solution_str)
+    for match in matches:
+        if match:
+            answer = match.group(1).strip()
             try:
-                instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
-                instruction = instruction_cls(instruction_id)
+                payload = json.loads(answer)
+            except json.JSONDecodeError:
+                return None
 
-                if kw is None:
-                    kw = {}
+            if not isinstance(payload, dict):
+                return None
 
-                filtered_kwargs = {
-                    k: v for k, v in kw.items()
-                    if v is not None
-                }
+            if set(payload.keys()) != {"name", "arguments"}:
+                return None
 
-                # Important: build_description sets internal fields used by check_following
-                instruction.build_description(**filtered_kwargs)
+            if not isinstance(payload["name"], str) or not payload["name"].strip():
+                return None
 
-                followed = instruction.check_following(solution_str)
+            if not isinstance(payload["arguments"], dict):
+                return None
 
-                # Protect against buggy check_following functions returning None
-                followed = bool(followed)
-
-                is_following_list.append(followed)
-
-                if should_debug:
-                    log("Instruction:", instruction_id)
-                    log("kwargs:", filtered_kwargs)
-                    log("Followed:", followed)
-                    log("Reward contribution:", int(followed))
-
-            except Exception as e:
-                log(f"Error processing instruction {instruction_id} with kwargs {kw}: {e}")
-                log("The corresponding completion was:")
-                log(solution_str)
-                is_following_list.append(False)
-
-        if extra_info['reward_mode'] == "binary":
-            reward = float(all(is_following_list))
         else:
-            reward = float(
-                sum(is_following_list) / len(is_following_list)
-                if is_following_list else 0.0
-            )
+            answer = None
+            print("answer couldn't be extracted from the <tool_call> tags : ", solution_str)
+            return 0.0
+        
 
+"""
+apparently there is what's called an in memory sandbox necessary here, look into it
+finish the IF-RL stage and the report!!!!!!!!!!!!!!!
 
-        if should_debug:
-            log("is_following_list:", is_following_list)
-            log("Final reward:", reward)
-
-        return reward
+"""
+    
+    
+    
+    

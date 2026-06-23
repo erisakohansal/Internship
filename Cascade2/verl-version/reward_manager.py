@@ -23,8 +23,8 @@ from verl.workers.reward_manager.abstract import AbstractRewardManager
 
 # https://github.com/verl-project/verl/blob/main/verl/workers/reward_manager/dapo.py#L58
 
-@register("cutom_overlong")
-class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the overlong mechanism here
+@register("custom_overlong")
+class DAPORewardManagerOverlong(AbstractRewardManager):
     """The reward manager."""
 
     def __init__(
@@ -39,7 +39,7 @@ class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the ove
     ) -> None:
         self.reward_mode = reward_mode
         self.tokenizer = tokenizer
-        self.num_examine = num_examine  # the number of batches of decoded responses to print to the console
+        self.num_examine = num_examine
         self.compute_score = compute_score or default_compute_score
         self.reward_fn_key = reward_fn_key
         self.overlong_buffer_cfg = overlong_buffer_cfg
@@ -50,18 +50,19 @@ class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the ove
                 f"max_resp_len must be provided if {overlong_buffer_cfg=}, but got None"
             )
             assert self.max_resp_len >= self.overlong_buffer_cfg.len, (
-                "max_resp_len must be larger than overlong_buffer.len"
+                "max_resp_len must be larger than overlong_buffer.len "
+                f"but got {self.overlong_buffer_cfg.len}. "
+                "To disable the overlong penalty, set overlong_buffer.enable = False"
             )
             assert self.overlong_buffer_cfg.len > 0, (
-                "overlong_buffer.len must be positive when overlong penalty is enabled,"
-                f"but got {self.overlong_buffer_cfg.len}."
+                "overlong_buffer.len must be positive when overlong penalty is enabled, "
+                f"but got {self.overlong_buffer_cfg.len}. "
                 "To disable the overlong penalty, set overlong_buffer.enable = False"
             )
 
     def __call__(self, data: DataProto, return_dict: bool = False):
-        """We will expand this function gradually based on the available datasets"""
+        """We will expand this function gradually based on the available datasets."""
 
-        # If there is rm score, we directly return rm score. Otherwise, we compute via rm_score_fn
         reward_from_rm_scores = self._extract_reward_from_rm_scores(data, return_dict)
         if reward_from_rm_scores is not None:
             return reward_from_rm_scores
@@ -72,52 +73,39 @@ class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the ove
         already_print_data_sources = {}
 
         for i in range(len(data)):
-            data_item = data[i]  # DataProtoItem
+            data_item = data[i]
 
             prompt_ids = data_item.batch["prompts"]
-
             prompt_length = prompt_ids.shape[-1]
-
-            valid_prompt_length = data_item.batch["attention_mask"][:prompt_length].sum()
+            valid_prompt_length = int(data_item.batch["attention_mask"][:prompt_length].sum().item())
             valid_prompt_ids = prompt_ids[-valid_prompt_length:]
 
             response_ids = data_item.batch["responses"]
-            valid_response_length = data_item.batch["attention_mask"][prompt_length:].sum() # the mask is 1 for real tokens + eos token and 0 for padding tokens
+            valid_response_length = int(data_item.batch["attention_mask"][prompt_length:].sum().item())
             valid_response_ids = response_ids[:valid_response_length]
 
-            # decode
             prompt_str = self.tokenizer.decode(valid_prompt_ids, skip_special_tokens=True)
             response_str = self.tokenizer.decode(valid_response_ids, skip_special_tokens=True)
-            eos_token = self.tokenizer.eos_token
-            if response_str.endswith(eos_token):
-                response_str = response_str[: -len(eos_token)]
 
-
-
-
-            # check for truncation and overlong penalty
-            # do i need to convert to lists?
-            # recover the max_completion_length in extra_info
-            ids = ids.tolist() if hasattr(ids, "tolist") else list(ids)
-            is_overlong = (
-                valid_response_ids >= max_completion_length
-                and eos_token not in valid_response_ids
-            )
-            if is_overlong: 
-                reward = 0.0
-
-
-
-
-            ground_truth = data_item.non_tensor_batch["reward_model"]["ground_truth"]
+            eos_id = self.tokenizer.eos_token_id
+            response_token_ids = valid_response_ids.tolist() if hasattr(valid_response_ids, "tolist") else list(valid_response_ids)
+            has_eos = eos_id in response_token_ids
 
             data_source = data_item.non_tensor_batch[self.reward_fn_key]
+            ground_truth = data_item.non_tensor_batch["reward_model"]["ground_truth"]
 
             extra_info = data_item.non_tensor_batch.get("extra_info", {})
-
             rollout_reward_scores = data_item.non_tensor_batch.get("reward_scores", {})
-
             extra_info["rollout_reward_scores"] = rollout_reward_scores
+
+            max_completion_length = extra_info.get("max_completion_length", self.max_resp_len)
+            if max_completion_length is None:
+                max_completion_length = 0
+            is_overlong = (
+                max_completion_length > 0
+                and valid_response_length >= max_completion_length
+                and not has_eos
+            )
 
             result = self.compute_score(
                 data_source=data_source,
@@ -126,30 +114,29 @@ class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the ove
                 extra_info=extra_info,
             )
 
-            score: float
             if isinstance(result, dict):
-                score = result["score"]
-                # Store the information including original reward
+                score = float(result["score"])
                 for key, value in result.items():
                     reward_extra_info[key].append(value)
             else:
-                score = result
+                score = float(result)
                 reward_extra_info["acc"].append(score)
 
-            reward = score
+            reward = 0.0 if is_overlong else score
+            reward_extra_info["overlong_truncated"].append(is_overlong)
 
             if self.overlong_buffer_cfg is not None and self.overlong_buffer_cfg.enable:
                 overlong_buffer_len = self.overlong_buffer_cfg.len
                 expected_len = self.max_resp_len - overlong_buffer_len
                 exceed_len = valid_response_length - expected_len
                 overlong_penalty_factor = self.overlong_buffer_cfg.penalty_factor
-                overlong_reward = min(-exceed_len / overlong_buffer_len * overlong_penalty_factor, 0)
+                overlong_reward = float(min(-exceed_len / overlong_buffer_len * overlong_penalty_factor, 0))
                 reward += overlong_reward
                 if self.overlong_buffer_cfg.log:
                     reward_extra_info["overlong_reward"].append(overlong_reward)
                     reward_extra_info["overlong"].append(overlong_reward < 0)
 
-            reward_tensor[i, valid_response_length - 1] = reward
+            reward_tensor[i, max(valid_response_length - 1, 0)] = reward
 
             if data_source not in already_print_data_sources:
                 already_print_data_sources[data_source] = 0
@@ -170,5 +157,4 @@ class DAPORewardManagerOverlong(AbstractRewardManager): # => just change the ove
                 "reward_tensor": reward_tensor,
                 "reward_extra_info": reward_extra_info,
             }
-        else:
-            return reward_tensor
+        return reward_tensor

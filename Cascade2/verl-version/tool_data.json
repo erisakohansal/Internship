@@ -6,7 +6,7 @@
         },
         {
             "role": "user",
-            "content": "Reschedule my first appointment with sofia on December 15 1.5 hours later"
+            "content": "kofi just sent me an email that I need to delete. Can you get rid of of the most recent email they sent me?"
         }
     ],
     "tools": [
