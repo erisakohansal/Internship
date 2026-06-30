@@ -80,6 +80,7 @@ class FormatData:
     @staticmethod
     def format_data_if(data, idx):
         # https://verl.readthedocs.io/en/latest/preparation/prepare_data.html
+        assert len(data['instruction_id_list']) > 0
 
         return {
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
@@ -274,7 +275,7 @@ class FormatData:
         print("Dataset columns : ", data.column_names)
         print("Raw dataset size : ", len(data))
 
-        data = data.filter(FormatData.is_supported_language)
+        data = data.filter(FormatData.is_supported_language, load_from_cache_file=False,)
 
         print("Filtered dataset size : ", len(data))
 
@@ -293,9 +294,22 @@ class FormatData:
         print(dataset[0]["prompt"])
         print(dataset[0]["extra_info"])
 
+        splits = dataset.train_test_split(
+            test_size=0.05,
+            seed=42, 
+            shuffle=True,
+        )
+
+        train_set = splits['train']
+        test_set = splits['test']
         local_dir = os.getcwd()
-        dataset.to_parquet(os.path.join(local_dir, 'train.parquet'))
-        return dataset
+
+        print("\tSize of the train split : ", len(train_set))
+        print("\tSize of the test split : ", len(test_set))
+
+        train_set.to_parquet(os.path.join(local_dir, config+'-train.parquet'))
+        test_set.to_parquet(os.path.join(local_dir, config+'-test.parquet'))
+        return train_set, test_set
 
 if __name__ == "__main__":
     # Uncomment one of the following:

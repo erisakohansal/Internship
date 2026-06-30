@@ -20,7 +20,6 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
 
     print_to_terminal = extra_info['print_to_terminal']
     debug_path = extra_info['debug_path']
-    max_completion_length = extra_info['max_compeltion_length']
 
     def log(*args, **print_kwargs):
         """Print to terminal and append the same message to an external file."""
@@ -30,20 +29,23 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
         with open(debug_path, "a", encoding="utf-8") as f:
             print(*args, **print_kwargs, file=f)
 
-    instr_list = extra_info.get('instruction_id_list', [])
-    kwarg_list = extra_info.get('kwargs', [])
+    instr_list = extra_info['instruction_id_list']
+    kwarg_list = extra_info['kwargs']
 
     is_following_list = []
-
+    if should_debug:
+        log("#" * 100)
+        
     for instruction_id, kw in zip(instr_list, kwarg_list):
         try:
-            if "language" in kw:
-                assert kw["language"] in FormatData.SUPPORTED_LANGUAGES
             instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
             instruction = instruction_cls(instruction_id)
 
             if kw is None:
                 kw = {}
+
+            if "language" in kw:
+                assert kw["language"] in FormatData.SUPPORTED_LANGUAGES
 
             filtered_kwargs = {
                 k: v for k, v in kw.items()
@@ -56,32 +58,42 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
             is_following_list.append(followed)
 
             if should_debug:
+                log("-" * 100)
                 log("Instruction:", instruction_id)
                 log("kwargs:", filtered_kwargs)
                 log("Followed:", followed)
                 log("Reward contribution:", int(followed))
+                log("-" * 100)
 
         except Exception as e:
+            log("-" * 100)
             log(f"Error processing instruction {instruction_id} with kwargs {kw}: {e}")
             log("The corresponding completion was:")
             log(solution_str)
             is_following_list.append(False)
+            log("-" * 100)
 
-    if extra_info.get('reward_mode') == "binary":
+    reward_mode = extra_info['reward_mode'] 
+    if reward_mode == "binary":
         reward = float(all(is_following_list))
-    else:
+
+    elif reward_mode == "fraction":
         reward = float(
             sum(is_following_list) / len(is_following_list)
             if is_following_list else 0.0
         )
+    
+    else:
+        raise ValueError(f"Invalid reward mode: {reward_mode}")
 
     if should_debug:
         log("is_following_list:", is_following_list)
         log("Final reward:", reward)
     
     counter += 1
-
-    return {"reward": reward, "acc": reward}  # binary, so acc == reward here
+    score = float(reward.item()) if hasattr(reward, "item") else float(reward)
+    assert type(score) is float
+    return score  # binary, so acc == reward here
 
 
 def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
