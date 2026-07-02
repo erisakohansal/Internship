@@ -2,9 +2,11 @@
 
 export CUDA_VISIBLE_DEVICES=0
 export HYDRA_FULL_ERROR=1
+export HF_HOME=/mnt/tier1/project/p201382/erisa/hf_cache
+export HF_DATASETS_CACHE=$HF_HOME/datasets
 export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
 
-PWD="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version"
+PWD="$(pwd)"
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
