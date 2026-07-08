@@ -1,20 +1,18 @@
 #!/bin/bash
 
-export CUDA_VISIBLE_DEVICES=0
-export HYDRA_FULL_ERROR=1
-export HF_HOME=/mnt/tier1/project/p201382/erisa/hf_cache
-export HF_DATASETS_CACHE=$HF_HOME/datasets
-export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+# export HYDRA_FULL_ERROR=1
+# export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+export TOKENIZERS_PARALLELISM=false
 
-PWD="$(pwd)"
+PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version"
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
 CHECKPOINT_PATH="$PWD/if_rl_verl_binary_checkpoints"
 
-.venv/bin/python3 dataset.py 2>&1 | tee output.txt
+# .venv/bin/python3 dataset.py 2>&1 | tee output.txt
 
-.venv/bin/python3 -m verl.trainer.main_ppo \
+.venv/bin/python -m verl.trainer.main_ppo \
   data.train_files=IF-RL-train.parquet \
   data.val_files=IF-RL-test.parquet \
   data.train_batch_size=128 \
@@ -42,7 +40,7 @@ CHECKPOINT_PATH="$PWD/if_rl_verl_binary_checkpoints"
   actor_rollout_ref.rollout.n=16 \
   actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
   actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
-  actor_rollout_ref.rollout.gpu_memory_utilization=0.15 \
+  actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
   actor_rollout_ref.rollout.max_model_len=9000 \
   actor_rollout_ref.actor.fsdp_config.model_dtype=bfloat16 \
   algorithm.adv_estimator=grpo \
@@ -66,10 +64,10 @@ CHECKPOINT_PATH="$PWD/if_rl_verl_binary_checkpoints"
   trainer.save_freq=10 \
   trainer.val_before_train=true \
   trainer.test_freq=10 \
-  trainer.default_local_dir=if_rl_verl_binary_checkpoints \
+  trainer.default_local_dir=/project/home/p201382/erisa/IF_RL/if_rl_verl_binary_checkpoints \
   trainer.project_name=if_rl_verl_binary \
   trainer.experiment_name=if_rl_verl_binary \
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
-  trainer.n_gpus_per_node=1 \
+  trainer.n_gpus_per_node=4 \
   2>&1 | tee -a output.txt

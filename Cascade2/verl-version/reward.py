@@ -128,10 +128,96 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
 
 """
 apparently there is what's called an in memory sandbox necessary here, look into it
-finish the IF-RL stage and the report!!!!!!!!!!!!!!!
-
 """
     
-    
+def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
+    """
+    solution_str : decoded model response
+    extra_info : dataset metadata
+    the reward manager detokenizes the response before calling the scoring function.
+    there are 4 different grading modes for mcqa: 
+    - "strict_single_letter_boxed" : the answer must be a single letter (A, B, C, D) and it must be boxed (e.g., [A], (B), {C}, <D>)
+    - "lenient_boxed" : the answer can be a single letter (A, B, C, D) or a word (e.g., "A", "B", "C", "D") and it must be boxed (e.g., [A], (B), {C}, <D>)
+    - "lenient_answer_colon" : the answer can be a single letter (A, B, C, D) or a word (e.g., "A", "B", "C", "D") and it can be preceded by a colon (e.g., ": A", ": B", ": C", ": D")
+    - "lenient_answer_colon_md" : the answer can be a single letter (A, B, C, D) or a word (e.g., "A", "B", "C", "D") and it can be preceded by a colon (e.g., ": A", ": B", ": C", ": D") and it can be in markdown format (e.g., "**A**", "*B*", "__C__", "_D_")
+    """
+
+    reward_mode = extra_info["reward_mode"]
+    output_regex = extra_info["template_metadata"]["output_regex"]
+    options = extra_info["options"]
+
+    # allowed letters extracted from the options 
+    letters: set[str] = set()
+    if options:
+        for entry in options:
+            # Exclude null values
+            for k, v in entry.items():
+                if isinstance(k, str) and len(k) == 1 and k.isalpha() and v is not None:
+                    letters.add(k.upper())
+    return letters
+
+    if isinstance(output_regex, str):
+        """Parse answer using custom regex from template_metadata.
+
+        Uses rightmost (last) match to handle reasoning before final answer.
+        Case-insensitive matching to handle capitalization variations.
+
+        When using template_metadata with custom regex, we trust the regex pattern
+        and allow extracted letters even if options metadata is incomplete.
+        """
+        try:
+            # Use IGNORECASE flag and findall to get all matches
+            matches = re.findall(regex_pattern, text, re.IGNORECASE)
+            if not matches:
+                return None
+
+            # Take the LAST match (rightmost)
+            text = matches[-1].strip()
+            captured = (
+                text.replace("أ", " A")
+                .replace("ب", " B")
+                .replace("ج", " C")
+                .replace("د", " D")
+                .replace("অ", " A")
+                .replace("ব", " B")
+                .replace("ড", " C")
+                .replace("ঢ", " D")
+                .replace("Ａ", " A") # different A character ????
+                .replace("Ｂ", " B")
+                .replace("Ｃ", " C")
+                .replace("Ｄ", " D")
+                .strip()
+            ).upper()
+            
+          
+
+            # Try direct letter match first
+            if len(captured) == 1 and captured.isalpha():
+                # If we have options metadata, validate against it
+                if allowed_letters and captured in allowed_letters:
+                    return captured
+                # If options metadata is missing/incomplete, trust the regex
+                # This handles cases where template_metadata regex is used but options are incomplete
+                elif not allowed_letters:
+                    return captured
+                # If captured letter is not in allowed_letters but allowed_letters exists,
+                # it might be a data quality issue - still return it when using template_metadata
+                else:
+                    # Trust the regex when using template_metadata (this function is only called for template_metadata)
+                    return captured
+
+            # Try matching against option text (normalized)
+            normalized_captured = " ".join(captured.lower().split()) # _normalize_for_match function from verl
+            for entry in options or []:
+                for k, v in entry.items():
+                    if v is not None and k.upper() in allowed_letters and " ".join(v.lower().split()) == normalized_captured:
+                        return k.upper()
+
+            return None
+        except re.error:
+            # Invalid regex pattern, return None
+            return None
+
+    # if template metadata didn't work etc, it relies on the default grading mode   
     
     

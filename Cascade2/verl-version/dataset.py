@@ -55,6 +55,16 @@ class FormatData:
     You are not allowed to use any tools.
     """ 
 
+    SYSTEM_PROMPT_MCQA = (
+    "You are solving a multiple-choice question. "
+    "Reason if needed, but your final answer must be exactly one option letter "
+    "inside LaTeX boxed format, for example: \\boxed{A}."
+    )
+
+    SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
+    You are a helpful and harmless assistant."""
+
+
     dataset_languages = []
     filtered_languages = []
 
@@ -122,6 +132,12 @@ class FormatData:
 
     @staticmethod
     def transform_tool_format(tools):
+        """
+        the tools in the nemotron dataset are in a 
+        different format than what Qwen2.5 expects, 
+        so we need to transform them into the expected format.
+        From Hermes style to OpenAI style 
+        """
         # format of the dicts
         res = []
         for tool in tools:
@@ -135,7 +151,7 @@ class FormatData:
                     }
                 }
             )
-        # "strict" and "parallel_tool_calls" are dropped — Qwen doesn't use them
+        # "strict" and "parallel_tool_calls" are dropped -> Qwen doesn't use them
         return res
     
     @staticmethod
@@ -201,20 +217,20 @@ class FormatData:
         return {
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
-                {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_IF},
+                {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_MCQA},
                 data['responses_create_params']['input'][0],
             ],
-            'ability': 'instruction_following',
+            'ability': 'mcqa',
             'reward_model': {
                 'style': 'rule',
-                'ground_truth': None,
+                'ground_truth': data['expected_answer'],
             },
             'extra_info': {
                 'split': 'train',
                 'index': idx,
                 'reward_mode': 'binary',
-                'instruction_id_list': data['instruction_id_list'],
-                'kwargs': data['kwargs'],
+                'template_metadata': data['template_metadata'],
+                'options': data['options'],
                 'print_to_terminal': False,
                 'debug_path': 'if_reward_binary_verl.txt',
                 'max_completion_length': 4000,
@@ -227,7 +243,7 @@ class FormatData:
         return {
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
-                {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_IF},
+                {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_STRUCTURED_OUTPUTS},
                 data['responses_create_params']['input'][0],
             ],
             'ability': 'instruction_following',
@@ -250,19 +266,16 @@ class FormatData:
 
     @staticmethod
     def format_data_multi_domain(data, idx):
-        res = {}
 
         match data['agent_ref']['name']:
             case "workplace_assistant_simple_agent":
-                res = FormatData.workplace_assistant_data(data, idx)
+                return FormatData.workplace_assistant_data(data, idx)
 
             case "mcqa_simple_agent":
-                res = FormatData.mcqa_data(data, idx)
+                return FormatData.mcqa_data(data, idx)
             
             case "structured_outputs_simple_agent":
-                res = FormatData.structured_outputs_data(data, idx)
-
-        return res
+                return FormatData.structured_outputs_data(data, idx)
 
 
     @staticmethod
@@ -272,27 +285,40 @@ class FormatData:
             config,
             split="train",
         )
-        print("Dataset columns : ", data.column_names)
-        print("Raw dataset size : ", len(data))
 
-        data = data.filter(FormatData.is_supported_language, load_from_cache_file=False,)
+        match config:
+            case "IF-RL":
+                print("Dataset columns : ", data.column_names)
+                print("Raw dataset size : ", len(data))
 
-        print("Filtered dataset size : ", len(data))
+                data = data.filter(FormatData.is_supported_language, load_from_cache_file=False,)
 
-        print("All available languages in the dataset: ", len(set(FormatData.dataset_languages)), set(FormatData.dataset_languages))
-        print("All supported languages by Qwen2.5-1.5B-Instruct: ", len(FormatData.SUPPORTED_LANGUAGES),  FormatData.SUPPORTED_LANGUAGES)
-        print("All filtered languages : ", len(set(FormatData.filtered_languages)), set(FormatData.filtered_languages))
+                print("Filtered dataset size : ", len(data))
 
-        dataset = data.map(
-            FormatData.format_data_if,
-            remove_columns=data.column_names,
-            load_from_cache_file=False,
-            with_indices=True,
-        )
+                print("All available languages in the dataset: ", len(set(FormatData.dataset_languages)), set(FormatData.dataset_languages))
+                print("All supported languages by Qwen2.5-1.5B-Instruct: ", len(FormatData.SUPPORTED_LANGUAGES),  FormatData.SUPPORTED_LANGUAGES)
+                print("All filtered languages : ", len(set(FormatData.filtered_languages)), set(FormatData.filtered_languages))
+
+                dataset = data.map(
+                    FormatData.format_data_if,
+                    remove_columns=data.column_names,
+                    load_from_cache_file=False,
+                    with_indices=True,
+                )
+
+
+            case "multi-domain-RL":
+                dataset = data.map(
+                    FormatData.format_data_multi_domain,
+                    remove_columns=data.column_names,
+                    load_from_cache_file=False,
+                    with_indices=True,
+                )
 
         print(dataset[0])
         print(dataset[0]["prompt"])
         print(dataset[0]["extra_info"])
+
 
         splits = dataset.train_test_split(
             test_size=0.05,
@@ -307,8 +333,8 @@ class FormatData:
         print("\tSize of the train split : ", len(train_set))
         print("\tSize of the test split : ", len(test_set))
 
-        train_set.to_parquet(os.path.join(local_dir, config+'-train.parquet'))
-        test_set.to_parquet(os.path.join(local_dir, config+'-test.parquet'))
+        train_set.to_parquet(os.path.join(local_dir, config+'-train-tmp.parquet'))
+        test_set.to_parquet(os.path.join(local_dir, config+'-test-tmp.parquet'))
         return train_set, test_set
 
 if __name__ == "__main__":
