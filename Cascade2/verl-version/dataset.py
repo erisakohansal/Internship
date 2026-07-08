@@ -106,11 +106,11 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'reward_mode': 'binary',
+                'reward_mode': 'fraction',
                 'instruction_id_list': data['instruction_id_list'],
                 'kwargs': data['kwargs'],
                 'print_to_terminal': False,
-                'debug_path': 'if_reward_binary_verl.txt',
+                'debug_path': 'if_reward_fraction_verl.txt',
                 'max_completion_length': 4000,
             },
         }
@@ -333,8 +333,8 @@ class FormatData:
         print("\tSize of the train split : ", len(train_set))
         print("\tSize of the test split : ", len(test_set))
 
-        train_set.to_parquet(os.path.join(local_dir, config+'-train-tmp.parquet'))
-        test_set.to_parquet(os.path.join(local_dir, config+'-test-tmp.parquet'))
+        train_set.to_parquet(os.path.join(local_dir, config+'-fraction-train.parquet'))
+        test_set.to_parquet(os.path.join(local_dir, config+'-fraction-test.parquet'))
         return train_set, test_set
 
 if __name__ == "__main__":
