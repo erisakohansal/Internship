@@ -1,0 +1,85 @@
+{
+    "input": [
+        {
+            "content": "# Instrutions:\nGenerate a JSON output that strictly adheres to the specified 
+            schema based on the document provided.\n\n# Document:\nThe individual has established clear 
+            financial goals across short-, medium-, and long-term horizons. The short-term goal is to 
+            build a fully funded emergency fund that covers six months of essential living expenses, 
+            totaling $21,000. These essential expenses include housing, utilities, groceries, and 
+            transportation, which together amount to $3,500 per month. Currently, the emergency 
+            fund holds $18,500 in a high-yield savings account, meaning it is not yet fully funded, 
+            with a remaining gap of $2,500. The medium-term financial goals include eliminating 
+            $8,200 in high-interest credit card debt over the next three years while simultaneously 
+            saving $12,000 for a down payment on a new vehicle. The long-term objectives focus on 
+            retirement planning and mortgage payoff: the individual aims to accumulate a retirement 
+            portfolio valued at $1.2 million (adjusted for inflation) by age 65 and to fully pay off 
+            the mortgage on their primary residence within 18 years.\n\nThe individual’s total monthly 
+            after-tax income is $7,800, derived from primary employment and consistent side consulting 
+            work. Monthly spending is carefully allocated across major expense categories: $2,200 for 
+            housing, which includes a fixed-rate mortgage payment and homeowners association (HOA) fees; 
+            $375 for utilities, covering electricity, gas, water, internet, and mobile phone services; 
+            $650 for groceries, based on historical spending tracked through personal finance software; 
+            and $480 for transportation, encompassing car loan payments, fuel, routine maintenance, auto 
+            insurance, and public transit costs for commuting. In addition to these core expenses, the 
+            individual makes total monthly debt payments of $1,140, broken down as follows: $320 toward 
+            credit cards, $285 for student loans, $295 for the auto loan, and $240 allocated to mortgage 
+            principal and interest beyond what is included in the housing category. The total outstanding 
+            unsecured and secured debt (excluding mortgage) amounts to $47,300, consisting of $8,200 in 
+            credit card debt, $32,000 in student loans, and $7,100 in an auto loan.\n\nSavings and investment 
+            activities are structured to support both immediate and future financial stability. The individual 
+            maintains a savings rate of 22% of monthly income, which translates to approximately $1,716 per 
+            month directed toward various savings vehicles. This includes contributions to the emergency 
+            fund, retirement accounts, and other designated goals such as the vehicle down payment and 
+            upcoming expenses. Retirement savings are managed through a combination of a 401(k) and a 
+            traditional IRA. Annually, the individual contributes $14,000 across these accounts: $10,000 
+            to the employer-sponsored 401(k) and $4,000 to the traditional IRA. These contributions provide 
+            tax advantages and are part of a broader tax strategy that includes filing as \"single,\" claiming 
+            the standard deduction, and utilizing the student loan interest deduction.\n\nThe investment portfolio 
+            has a current market value of $89,400 and is strategically diversified to reflect a moderate risk 
+            tolerance. The allocation consists of approximately 60% equities—comprised of index funds and 
+            individual stocks—and 40% fixed-income securities such as bonds. This balanced approach aims 
+            to achieve steady growth while managing volatility over time. The portfolio is periodically 
+            reviewed and rebalanced in coordination with a certified financial advisor, with whom the 
+            individual meets quarterly—every three months—to assess progress toward financial goals, 
+            evaluate investment performance, and make necessary adjustments based on life changes or market 
+            conditions.\n\nInsurance coverage plays a critical role in the individual’s financial plan. 
+            Health insurance is provided through an employer-sponsored plan, ensuring access to medical 
+            care without significant out-of-pocket burden. A term life insurance policy offers a $500,000 
+            death benefit, providing financial protection for dependents or beneficiaries in the event of 
+            premature death. Additionally, long-term disability insurance is in place, designed to replace 
+            60% of the individual’s income if they become unable to work due to a qualifying disability, 
+            thereby safeguarding long-term financial stability.\n\nThe individual’s net worth is calculated 
+            at $107,200, determined by subtracting total liabilities (including all unsecured debts and 
+            secured loans) from total assets. Assets include cash in savings accounts, retirement account 
+            balances, investment portfolio value, and home equity. This net worth figure reflects a positive 
+            financial trajectory, supported by disciplined saving, consistent debt repayment, and strategic 
+            investing.\n\nTwo major upcoming expenses have been identified and budgeted for:\n- A destination 
+            wedding for a close family member, requiring a contribution of $3,500, scheduled for September 12, 
+            2024.\n- A home renovation project with an estimated cost of $15,000, planned for completion by 
+            June 15, 2025.\n\nThese expenses are being factored into the overall financial plan, with funds 
+            being set aside incrementally to avoid disruption to other financial goals, particularly the emergency 
+            fund buildup and credit card debt repayment. Given the proximity of the wedding, a portion of the 
+            savings rate is temporarily being directed toward fulfilling this obligation, while the longer 
+            timeline for the renovation allows for more gradual accumulation of funds. Overall, the financial 
+            plan demonstrates a comprehensive, proactive, and well-documented approach to achieving financial 
+            security across multiple dimensions and timeframes.\nCreate a structured JSON response that:\n1. 
+            Implements proper data typing\n2. Includes all required fields\n3. Handles special characters 
+            appropriately\n4. Is unindented JSON format\n5. Validates against schema constraints\n6. 
+            Provides appropriate array formatting\n7. Uses consistent formatting and escaping\n8. 
+            Maintains proper nesting levels\n9. Is grounded in the provided dialog\n10. Strictly 
+            follows the provided schema: 
+            {'type': 'json_schema', 'json_schema': 
+            {'name': 'scene_description', 'schema': 
+            {'type': 'object', 'properties': 
+            {'financialGoals': 
+            {'type': 'object', 
+            'properties': {'shortTerm': 
+            {'type': 'string'}, 
+            'mediumTerm': 
+            {'type': 'string'}, 
+            'longTerm': {'type': 
+            'string'}}, 'required': ['shortTerm', 'mediumTerm', 'longTerm'], 'additionalProperties': False}, 'monthlyIncome': {'type': 'number'}, 'monthlyExpenses': {'type': 'object', 'properties': {'housing': {'type': 'number'}, 'utilities': {'type': 'number'}, 'groceries': {'type': 'number'}, 'transportation': {'type': 'number'}}, 'required': ['housing', 'utilities', 'groceries', 'transportation'], 'additionalProperties': False}, 'savingsRate': {'type': 'number', 'minimum': 0, 'maximum': 100}, 'emergencyFund': {'type': 'object', 'properties': {'currentAmount': {'type': 'number'}, 'targetAmount': {'type': 'number'}, 'fullyFunded': {'type': 'boolean'}}, 'required': ['currentAmount', 'targetAmount', 'fullyFunded'], 'additionalProperties': False}, 'debt': {'type': 'object', 'properties': {'totalAmount': {'type': 'number'}, 'monthlyPayment': {'type': 'number'}, 'types': {'type': 'array', 'items': {'type': 'string', 'enum': ['credit_card', 'student_loan', 'mortgage', 'auto_loan']}}}, 'required': ['totalAmount', 'monthlyPayment', 'types'], 'additionalProperties': False}, 'retirementAccounts': {'type': 'object', 'properties': {'has401k': {'type': 'boolean'}, 'hasIra': {'type': 'boolean'}, 'annualContribution': {'type': 'number'}}, 'required': ['has401k', 'hasIra', 'annualContribution'], 'additionalProperties': False}, 'investmentPortfolio': {'type': 'object', 'properties': {'totalValue': {'type': 'number'}, 'riskLevel': {'type': 'string', 'enum': ['conservative', 'moderate', 'aggressive']}}, 'required': ['totalValue', 'riskLevel'], 'additionalProperties': False}, 'insuranceCoverage': {'type': 'object', 'properties': {'health': {'type': 'boolean'}, 'life': {'type': 'boolean'}, 'disability': {'type': 'boolean'}}, 'required': ['health', 'life', 'disability'], 'additionalProperties': False}, 'netWorth': {'type': 'number'}, 'financialAdvisor': {'type': 'object', 'properties': {'hasAdvisor': {'type': 'boolean'}, 'meetingFrequency': {'type': 'string'}}, 'required': ['hasAdvisor', 'meetingFrequency'], 'additionalProperties': False}, 'taxStrategy': {'type': 'object', 'properties': {'filingStatus': {'type': 'string', 'enum': ['single', 'married_filing_jointly', 'head_of_household']}, 'deductionsUsed': {'type': 'array', 'items': {'type': 'string'}}}, 'required': ['filingStatus', 'deductionsUsed'], 'additionalProperties': False}, 'majorUpcomingExpenses': {'type': 'array', 'items': {'type': 'object', 'properties': {'description': {'type': 'string'}, 'estimatedCost': {'type': 'number'}, 'targetDate': {'type': 'string', 'format': 'date'}}, 'required': ['description', 'estimatedCost', 'targetDate'], 'additionalProperties': False}}}, 'required': ['financialGoals', 'monthlyIncome', 'monthlyExpenses', 'savingsRate', 'emergencyFund', 'debt', 'retirementAccounts', 'investmentPortfolio', 'insuranceCoverage', 'netWorth', 'financialAdvisor', 'taxStrategy', 'majorUpcomingExpenses'], 'additionalProperties': False}}}",
+            "role": "user"
+        }
+    ]
+}

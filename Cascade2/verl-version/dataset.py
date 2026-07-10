@@ -62,7 +62,9 @@ class FormatData:
     )
 
     SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
-    You are a helpful and harmless assistant."""
+    You are a helpful and harmless assistant.
+    The model outputs a tool call whose arguments must match a schema.
+    """
 
 
     dataset_languages = []
@@ -205,7 +207,6 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'reward_mode': 'binary', # to determine !!!!!
                 'print_to_terminal': False,
                 'max_completion_length': 4000,
             },
@@ -228,9 +229,11 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'reward_mode': 'binary',
+                
+                'reward_mode': 'strict_single_letter_boxed', # 4 options available, backup regex pattern
                 'template_metadata': data['template_metadata'],
                 'options': data['options'],
+
                 'print_to_terminal': False,
                 'debug_path': 'if_reward_binary_verl.txt',
                 'max_completion_length': 4000,
@@ -240,6 +243,8 @@ class FormatData:
 
     @staticmethod
     def structured_outputs_data(data, idx):
+        if data['schema_type']: assert data['schema_type'].strip() == 'json'
+
         return {
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
@@ -249,14 +254,11 @@ class FormatData:
             'ability': 'instruction_following',
             'reward_model': {
                 'style': 'rule',
-                'ground_truth': None,
+                'ground_truth': data['schema_str'],
             },
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'reward_mode': 'binary',
-                'instruction_id_list': data['instruction_id_list'],
-                'kwargs': data['kwargs'],
                 'print_to_terminal': False,
                 'debug_path': 'if_reward_binary_verl.txt',
                 'max_completion_length': 4000,

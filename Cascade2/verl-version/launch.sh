@@ -8,13 +8,15 @@ PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version"
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="$PWD/if_rl_verl_binary_checkpoints"
+CHECKPOINT_PATH="/project/home/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints"
+TRAIN_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-train.parquet"
+TEST_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-test.parquet"
 
 # .venv/bin/python3 dataset.py 2>&1 | tee output.txt
 
 .venv/bin/python -m verl.trainer.main_ppo \
-  data.train_files=IF-RL-train.parquet \
-  data.val_files=IF-RL-test.parquet \
+  data.train_files="$TRAIN_FILE" \
+  data.val_files="$TEST_FILE" \
   data.train_batch_size=128 \
   data.prompt_key=prompt \
   data.max_prompt_length=5000 \
@@ -64,10 +66,10 @@ CHECKPOINT_PATH="$PWD/if_rl_verl_binary_checkpoints"
   trainer.save_freq=10 \
   trainer.val_before_train=true \
   trainer.test_freq=10 \
-  trainer.default_local_dir=/project/home/p201382/erisa/IF_RL/if_rl_verl_binary_checkpoints \
-  trainer.project_name=if_rl_verl_binary \
-  trainer.experiment_name=if_rl_verl_binary \
+  trainer.default_local_dir="$CHECKPOINT_PATH" \
+  trainer.project_name=if_rl_verl_fraction \
+  trainer.experiment_name=if_rl_verl_fraction \
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
   trainer.n_gpus_per_node=4 \
-  2>&1 | tee -a output.txt
+  2>&1 | tee -a output-fraction.txt
