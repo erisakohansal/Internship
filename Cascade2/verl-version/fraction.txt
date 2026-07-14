@@ -1,0 +1,106 @@
+Merging global_step_10...
+W0714 19:46:41.397000 27050 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_10', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_10/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_10/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:46:41.939000 27050 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:46:42.083000 27050 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:46:42.143000 27050 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:46:42.160000 27050 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  2.23it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:00<00:00,  2.17it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:00<00:00,  4.15it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_10
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.48s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.48s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_10
+Successfully merged global_step_10
+Merging global_step_100...
+W0714 19:47:25.254000 27287 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_100', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_100/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_100/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:47:25.798000 27287 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:47:25.972000 27287 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:47:25.980000 27287 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:47:26.016000 27287 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  2.27it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:00<00:00,  2.12it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:00<00:00,  4.28it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_100
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.47s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.47s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_100
+Successfully merged global_step_100
+Merging global_step_110...
+W0714 19:48:08.474000 27598 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_110', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_110/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_110/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:48:09.131000 27598 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:09.306000 27598 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:09.319000 27598 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:09.330000 27598 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  1.81it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:01<00:01,  1.94it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:01<00:00,  3.85it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_110
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_110
+Successfully merged global_step_110
+Merging global_step_120...
+W0714 19:48:52.101000 27899 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_120', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_120/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_120/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:48:52.716000 27899 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:52.873000 27899 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:52.884000 27899 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:48:52.892000 27899 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  1.77it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:00<00:00,  2.19it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:00<00:00,  4.04it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_120
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_120
+Successfully merged global_step_120
+Merging global_step_130...
+W0714 19:49:33.388000 28212 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_130', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_130/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_130/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:49:33.991000 28212 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:49:34.171000 28212 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:49:34.187000 28212 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:49:34.240000 28212 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  2.15it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:01<00:01,  1.94it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:01<00:00,  3.93it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_130
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.59s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_130
+Successfully merged global_step_130
+Merging global_step_140...
+W0714 19:50:15.454000 28510 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_140', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_140/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_140/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:50:16.243000 28510 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:16.248000 28510 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:16.250000 28510 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:16.252000 28510 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:01<00:03,  1.01s/it]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:01<00:00,  3.72it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_140
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.40s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.41s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_140
+Successfully merged global_step_140
+Merging global_step_150...
+W0714 19:50:58.714000 28809 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+config: ModelMergerConfig(operation='merge', backend='fsdp', target_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_150', hf_upload_path=None, private=False, test_hf_dir=None, tie_word_embedding=False, trust_remote_code=False, is_value_model=False, local_dir='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_150/actor', hf_model_config_path='/mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/global_step_150/actor/huggingface', hf_upload=False, use_cpu_initialization=False)
+Got device mesh tensor([0, 1, 2, 3], dtype=torch.int32), mesh_dim_names ('fsdp',)
+Processing model shards with 4 (4,) in total
+Loading 4 FSDP shards:   0%|          | 0/4 [00:00<?, ?it/s]W0714 19:50:59.259000 28809 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:59.436000 28809 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:59.458000 28809 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+W0714 19:50:59.501000 28809 .venv/lib/python3.12/site-packages/torch/distributed/device_mesh.py:385] It seems like pickling/unpickling of the DeviceMesh occurred before the PGs were created. This will cause PG lookup to fail when torch.compile is enabled
+Loading 4 FSDP shards:  25%|██▌       | 1/4 [00:00<00:01,  1.98it/s]Loading 4 FSDP shards:  50%|█████     | 2/4 [00:00<00:00,  2.12it/s]Loading 4 FSDP shards: 100%|██████████| 4/4 [00:01<00:00,  3.97it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Saving model to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_150
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.43s/it]Writing model shards: 100%|██████████| 1/1 [00:02<00:00,  2.43s/it]
+Saving tokenizer to /mnt/tier2/project/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints/merged_checkpoints/global_step_150
+Successfully merged global_step_150
+Merging global_step_160...

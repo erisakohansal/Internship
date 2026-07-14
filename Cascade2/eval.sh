@@ -6,9 +6,9 @@ GPU_ID=0
 PORT=8002
 
 BASE_MODEL="Qwen/Qwen2.5-1.5B-Instruct"
-MODEL_DIR="IF-RL-Binary_checkpoints"
-OUT_DIR="eval/ifeval"
-LOG_DIR="logs/ifeval"
+MODEL_DIR="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL/if_rl_verl_binary_checkpoints/merged_checkpoints"
+OUT_DIR="${MODEL_DIR}/eval/ifeval"
+LOG_DIR="${MODEL_DIR}/logs/ifeval"
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$LOG_DIR"
@@ -63,20 +63,15 @@ mkdir -p "$LOG_DIR"
 # |      |       |none  |     0|prompt_level_loose_acc |↑  |0.4750|±  |0.0215|
 # |      |       |none  |     0|prompt_level_strict_acc|↑  |0.4418|±  |0.0214|
 
-for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "checkpoint-*" | sort -V); do
+for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "global_step_*" | sort -V); do
     NAME=$(basename "$CKPT")
     MODEL_PATH="$CKPT"
     MODEL_NAME="$NAME"
     OUTPUT_PATH="$OUT_DIR"
 
-    # Extract checkpoint number, e.g. checkpoint-25 -> 25
-    CKPT_NUM=${NAME#checkpoint-}
+    # Extract checkpoint number, e.g. global_step_25 -> 25
+    CKPT_NUM=${NAME#global_step_}
 
-    # Evaluate only every 5 checkpoints
-    if (( CKPT_NUM % 5 != 0 )); then
-        echo "Skipping $NAME because it is not a multiple of 5."
-        continue
-    fi
 
     if [ -d "$OUTPUT_PATH/$MODEL_NAME" ]; then
         echo "Skipping $MODEL_NAME, already evaluated."
@@ -97,7 +92,7 @@ for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "checkpoint-*" | sort 
         --generation-config vllm \
         --tokenizer Qwen/Qwen2.5-1.5B-Instruct \
         --max-model-len 4096 \
-        --gpu-memory-utilization 0.17 &
+        --gpu-memory-utilization 0.2 &
 
         VLLM_PID=$!
 

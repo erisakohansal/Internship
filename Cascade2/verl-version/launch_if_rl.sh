@@ -4,13 +4,13 @@
 # export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
 export TOKENIZERS_PARALLELISM=false
 
-PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version"
+PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL"
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
 CHECKPOINT_PATH="/project/home/p201382/erisa/IF_RL/if_rl_verl_fraction_checkpoints"
-TRAIN_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-train.parquet"
-TEST_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-test.parquet"
+TRAIN_FILE="$PWD/IF-RL-fraction-train.parquet"
+TEST_FILE="$PWD/IF-RL-fraction-test.parquet"
 
 # .venv/bin/python3 dataset.py 2>&1 | tee output.txt
 
