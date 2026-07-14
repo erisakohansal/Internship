@@ -1,6 +1,17 @@
 from openapi_schema_validator import validate as validate_against_schema_openapi
-# pip install --no-deps openapi-schema-validator 
-       
+import json
+import re
+from typing import Any, Dict, List, Optional, Tuple
+from tools.analytics import AnalyticsTool, analytics_tool_schemas
+from tools.calendar import CalendarTool, calendar_tool_schemas
+from tools.company_directory import CompanyDirectoryTool, company_directory_tool_schemas
+from tools.customer_relationship_manager import (
+    CustomerRelationshipManagerTool,
+    customer_relationship_manager_tool_schemas,
+)
+from tools.email import EmailTool, email_tool_schemas
+from tools.project_management import ProjectManagementTool, project_management_tool_schemas
+
 
 """
 apparently there is what's called an in memory sandbox necessary here, look into it
@@ -195,10 +206,14 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     """
     
     # Pull options/expected_answer from dataset-style metadata if available
-    options, expected_answer = options = extra_info["options"], ground_truth
+    print("\t completion: ", solution_str)
+    options, expected_answer = extra_info["options"], ground_truth
+    print("\toptions:", options)
+    print("\texpected_answer:", expected_answer)
     gold = (expected_answer or "").strip().upper()
     # Derive allowed letters from option keys
     allowed_letters = _get_allowed_letters_from_options(options)
+    print("\tallowed_letters:", allowed_letters)
 
     grading_mode = extra_info["reward_mode"]
 
@@ -212,11 +227,14 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     if template_metadata and "output_regex" in template_metadata:
         regex_patterns = template_metadata["output_regex"]
         pred = _parse_answer_with_custom_regexes(solution_str, regex_patterns, allowed_letters, options)
+        print("\tparsed answer from template_metadata regex:", pred)
 
     # Fallback to existing grading_mode logic if template_metadata didn't work
     if pred is None:
         if grading_mode == "strict_single_letter_boxed":
+            assert False
             pred, _, _ = _parse_answer_letter_strict_boxed(solution_str, allowed_letters)
+            print("\tparsed answer from strict_single_letter_boxed:", pred)
         elif grading_mode == "lenient_boxed":
             # Try strict boxed first
             pred, _, _ = _parse_answer_letter_strict_boxed(solution_str, allowed_letters)
@@ -259,7 +277,8 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
 
     is_correct = (pred == gold) if (pred is not None and gold) else False
     reward = 1.0 if is_correct else 0.0
-
+    print("\n\n\tpred:", pred, "gold:", gold, "reward:", reward)
+    assert False
     assert type(reward) is float
     return reward
 
@@ -283,32 +302,38 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
     the reward manager detokenizes the response before calling the scoring function.
     in this nemotron dataset there are only json schema types
     """
-    schema_str = extra_info["schema_str"]
     # strict schemas and schemaless? 
 
     # only the evaluate_structured_output_response is useful in this case : https://github.com/NVIDIA-NeMo/Gym/blob/50af84a5e2a7142c7d496dd9ea76b1e9d64202bd/resources_servers/structured_outputs/app.py#L434
+
     """Returns (reward, error_type, error_message)."""
-        if not solution_str or not solution_str.strip():
-            return 0.0, "empty_response", "No assistant response text"
+    if not solution_str or not solution_str.strip():
+        print("Empty response, returning reward 0.0")
+        return 0.0
 
-        try:
-            schema = json.loads(schema_str)
-        except Exception as e:
-            return 0.0 # "schema_error", str(e)[:200]
+    try:
+        schema = json.loads(ground_truth)
+    except Exception as e:
+        print("Error parsing schema: ", str(e)[:200])
+        return 0.0 
 
-        strictify_schema(schema)
+    strictify_schema(schema)
+    print("strictified schema: ", schema)
 
-        try:
-            parsed = json.loads(solution_str)
-        except Exception as e:
-            return 0.0 # "parse_error", f"{type(e).__name__}: {str(e)[:200]}"
+    try:
+        parsed = json.loads(solution_str)
+        print("parsed completion: ", parsed)
+    except Exception as e:
+        print(f"Error parsing completion: {type(e).__name__}: {str(e)[:200]}")
+        return 0.0 
 
-        try:
-
-            validate_against_schema_openapi(parsed, schema)
-            return 1.0 # None, None
-        except Exception as e:
-            return 0.0 # "validation_error", f"{type(e).__name__}: {str(e)[:200]}"
+    try:
+        validate_against_schema_openapi(parsed, schema)
+        print("SCORE: 1.0 - Completion is valid against schema")
+        return 1.0 
+    except Exception as e:
+        print(f"Error validating completion against schema: {type(e).__name__}: {str(e)[:200]}")
+        return 0.0
 
 
 # TOOL CALLING ---------------------------------------------------------------------------
@@ -329,13 +354,10 @@ def try_parse_tool_calls(content: str):
             func = json.loads(m.group(1).strip())
             if isinstance(func["arguments"], str): # sometimes the model may output a string containing json
                 func["arguments"] = json.loads(func["arguments"])
-                """
-                Small subtlety: it appends func to tool_calls before modifying func["arguments"], but since dictionaries are stored by reference, the object inside tool_calls is also updated. So this still works.
-                """
             tool_calls.append(func)
         except json.JSONDecodeError as e:
             print(f"Failed to parse tool calls: the content is {m.group(1)} and {e}")
-            pass # pass? no reward 0? just append []?
+            pass 
     return tool_calls
 
 def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
@@ -357,6 +379,29 @@ def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
             continue
     return tool_env
 
+def transform_tool_format(tools):
+    """
+    the tools in the nemotron dataset are in a 
+    different format than what Qwen2.5 expects, 
+    so we need to transform them into the expected format.
+    From Hermes style to OpenAI style 
+    """
+    # format of the dicts
+    res = []
+    for tool in tools:
+        res.append(
+            {
+                "type": tool["type"],
+                "function": {
+                    "name": tool["name"],
+                    "description": tool["description"],
+                    "parameters": tool["parameters"],
+                }
+            }
+        )
+    # "strict" and "parallel_tool_calls" are dropped -> Qwen doesn't use them
+    return res
+
 def get_tools(toolkits):
     tool_env = {
         "containers": {},
@@ -366,7 +411,7 @@ def get_tools(toolkits):
     company_directory = CompanyDirectoryTool()
     tool_env["containers"]["company_directory"] = company_directory
     tool_env["functions"]["company_directory_find_email_address"] = company_directory.find_email_address
-    tool_env["schemas"].extend(company_directory_tool_schemas)
+    tool_env["schemas"].extend(transform_tool_format(company_directory_tool_schemas))
     if "email" in toolkits:
         email = EmailTool()
         tool_env["containers"]["email"] = email
@@ -376,7 +421,7 @@ def get_tools(toolkits):
         tool_env["functions"]["email_delete_email"] = email.delete_email
         tool_env["functions"]["email_forward_email"] = email.forward_email
         tool_env["functions"]["email_reply_email"] = email.reply_email
-        tool_env["schemas"].extend(email_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(email_tool_schemas)
     if "calendar" in toolkits:
         calendar = CalendarTool()
         tool_env["containers"]["calendar"] = calendar
@@ -385,7 +430,7 @@ def get_tools(toolkits):
         tool_env["functions"]["calendar_create_event"] = calendar.create_event
         tool_env["functions"]["calendar_delete_event"] = calendar.delete_event
         tool_env["functions"]["calendar_update_event"] = calendar.update_event
-        tool_env["schemas"].extend(calendar_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(calendar_tool_schemas))
     if "analytics" in toolkits:
         analytics = AnalyticsTool()
         tool_env["containers"]["analytics"] = analytics
@@ -395,7 +440,7 @@ def get_tools(toolkits):
         tool_env["functions"]["analytics_traffic_source_count"] = analytics.traffic_source_count
         tool_env["functions"]["analytics_total_visits_count"] = analytics.total_visits_count
         tool_env["functions"]["analytics_get_average_session_duration"] = analytics.get_average_session_duration
-        tool_env["schemas"].extend(analytics_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(analytics_tool_schemas))
     if "project_management" in toolkits:
         project_management = ProjectManagementTool()
         tool_env["containers"]["project_management"] = project_management
@@ -406,7 +451,7 @@ def get_tools(toolkits):
         tool_env["functions"]["project_management_create_task"] = project_management.create_task
         tool_env["functions"]["project_management_delete_task"] = project_management.delete_task
         tool_env["functions"]["project_management_update_task"] = project_management.update_task
-        tool_env["schemas"].extend(project_management_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(project_management_tool_schemas))
     if "customer_relationship_manager" in toolkits:
         customer_relationship_manager = CustomerRelationshipManagerTool()
         tool_env["containers"]["customer_relationship_manager"] = customer_relationship_manager
@@ -422,7 +467,7 @@ def get_tools(toolkits):
         tool_env["functions"]["customer_relationship_manager_delete_customer"] = (
             customer_relationship_manager.delete_customer
         )
-        tool_env["schemas"].extend(customer_relationship_manager_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(customer_relationship_manager_tool_schemas))
     return tool_env
 
 def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
@@ -430,7 +475,7 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
     TODO:
     VERL rollout produces solution_str DONE
         ↓
-    your parser extracts <tool_call>...</tool_call> DONE
+    your parser extracts <tool_call>...</tool_call> DONE, try_parse_tool_calls
         ↓
     your reward function creates two fresh in-memory workbench envs
         ↓
@@ -443,7 +488,7 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
     """
 
     # should extract whats inside <tool_call> tags as the provided answer and compare to the ground_truth
-    tools_calls = try_parse_tool_calls(solution_str)
+    tool_calls = try_parse_tool_calls(solution_str)
     predict_env = execute_actions_and_reset_state(tool_calls)
     ground_truth_env = execute_actions_and_reset_state(ground_truth)
 

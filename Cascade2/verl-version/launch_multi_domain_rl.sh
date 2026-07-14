@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# export HYDRA_FULL_ERROR=1
+export HYDRA_FULL_ERROR=1
 # export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
 export TOKENIZERS_PARALLELISM=false
 
-PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL"
-REWARD_PATH="$PWD/reward.py"
+PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version"
+REWARD_PATH="$PWD/multi-domain-RL/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="/project/home/p201382/erisa/multi-domain-RL/multi_verl_fraction_checkpoints"
-TRAIN_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-train.parquet"
-TEST_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL-fraction-test.parquet"
+CHECKPOINT_PATH="/project/home/p201382/erisa/multi-domain-RL/multi_verl_checkpoints"
+TRAIN_FILE="$PWD/workplace_assistant-train.parquet"
+TEST_FILE="$PWD/workplace_assistant-test.parquet"
 
 # .venv/bin/python3 dataset.py 2>&1 | tee output.txt
 
@@ -61,15 +61,15 @@ TEST_FILE="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL
   +reward.reward_kwargs.overlong_buffer_cfg.penalty_factor=1.0 \
   +reward.reward_kwargs.overlong_buffer_cfg.log=true \
   reward.custom_reward_function.path="$REWARD_PATH" \
-  reward.custom_reward_function.name=if_reward_fn \
+  reward.custom_reward_function.name=tool_call_reward_fn \
   trainer.total_training_steps=180 \
   trainer.save_freq=10 \
   trainer.val_before_train=true \
   trainer.test_freq=10 \
   trainer.default_local_dir="$CHECKPOINT_PATH" \
-  trainer.project_name=if_rl_verl_fraction \
-  trainer.experiment_name=if_rl_verl_fraction \
+  trainer.project_name=workplace_verl \
+  trainer.experiment_name=workplace_verl\
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
-  trainer.n_gpus_per_node=4 \
+  trainer.n_gpus_per_node=1 \
   2>&1 | tee -a output-fraction.txt
