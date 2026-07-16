@@ -145,7 +145,7 @@ class FormatData:
         for tool in tools:
             res.append(
                 {
-                    "type": tool["function"],
+                    "type": tool["type"],
                     "function": {
                         "name": tool["name"],
                         "description": tool["description"],

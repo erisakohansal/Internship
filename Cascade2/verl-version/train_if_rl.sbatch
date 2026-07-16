@@ -25,4 +25,4 @@ source /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin
 cd /project/scratch/p201382/erisa/Internship/Cascade2/verl-version
 export PYTHONPATH=""
 
-./launch.sh
+./launch_if_rl.sh

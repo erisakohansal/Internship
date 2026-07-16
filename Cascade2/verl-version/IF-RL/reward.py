@@ -19,7 +19,8 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     should_debug = counter % debug_every == 0
 
     print_to_terminal = extra_info['print_to_terminal']
-    debug_path = extra_info['debug_path']
+    # debug_path = extra_info['debug_path']
+    debug_path = "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/IF-RL/logs.txt"
 
     def log(*args, **print_kwargs):
         """Print to terminal and append the same message to an external file."""
@@ -74,7 +75,6 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
             log("-" * 100)
 
     reward_mode = extra_info['reward_mode'] 
-    assert reward_mode == "fraction"
     if reward_mode == "binary":
         reward = float(all(is_following_list))
 
@@ -91,6 +91,9 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
         log("is_following_list:", is_following_list)
         log("Final reward:", reward)
     
+    # print("\n\tIFRL reward debug", {"reward":reward, "instr_list": instr_list, "kwarg_list":kwarg_list, "completion" : solution_str})
+    # log("\n\tIFRL reward debug", {"reward":reward, "instr_list": instr_list, "kwarg_list":kwarg_list, "completion" : solution_str})
+
     counter += 1
     assert type(reward) is float
     return reward  # reward == acc
