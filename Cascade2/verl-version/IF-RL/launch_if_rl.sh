@@ -1,24 +1,47 @@
-#!/bin/bash
+#!/bin/bash -l
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gpus-per-node=4
+#SBATCH --cpus-per-task=64
+#SBATCH -p gpu
+#SBATCH -A p201382
+#SBATCH -q default
+#SBATCH --time 10:00:00
+#SBATCH --job-name=launch_if_rl
+#SBATCH --output=slurm/logs/launch_if_rl_%j.out
+#SBATCH --error=slurm/logs/launch_if_rl_%j.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=erisa.kohansal@linguacustodia.com
 
-# export HYDRA_FULL_ERROR=1
-# export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+
+set -xeuo pipefail
+
+module load env/staging/2024.1
+module load CUDA-Python/12.6.0-gfbf-2024a-CUDA-12.6.0
+module load NCCL/2.22.3-GCCcore-13.3.0-CUDA-12.6.0
+module load CMake/3.29.3-GCCcore-13.3.0
+module load Ninja/1.12.1-GCCcore-13.3.0
+
+source /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin/activate
+PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL"
+cd $PWD
+
+export PYTHONPATH=""
+export HYDRA_FULL_ERROR=1
 export TOKENIZERS_PARALLELISM=false
 
-PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/IF-RL"
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="/project/home/p201382/erisa/IF_RL_test/if_rl_verl_binary_checkpoints"
+CHECKPOINT_PATH="/project/home/p201382/erisa/IF_RL_final/if_rl_verl_binary_checkpoints"
 TRAIN_FILE="$PWD/IF-RL-binary-train.parquet"
 TEST_FILE="$PWD/IF-RL-binary-test.parquet"
 MAX_PROMPT_LEN=5000
-MAX_RESPONSE_LEN=4000                                             # dataset max_completion_length ~4000
+MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
 MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct} 
 
-# .venv/bin/python3 dataset.py 2>&1 | tee output.txt
-
-.venv/bin/python -m verl.trainer.main_ppo \
+python3 -m verl.trainer.main_ppo \
   data.train_files="$TRAIN_FILE" \
   data.val_files="$TEST_FILE" \
   data.train_batch_size=128 \
@@ -55,13 +78,16 @@ MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct}
   actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
   actor_rollout_ref.rollout.max_model_len=${MAX_MODEL_LEN} \
   actor_rollout_ref.rollout.calculate_log_probs=False \
-  actor_rollout_ref.actor.fsdp_config.model_dtype=bfloat16 \
+  actor_rollout_ref.actor.fsdp_config.model_dtype=fp32 \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=False \
   algorithm.rollout_correction.rollout_is=null \
   algorithm.rollout_correction.rollout_rs=null \
   algorithm.rollout_correction.bypass_mode=False \
   algorithm.norm_adv_by_std_in_grpo=True \
+  +algorithm.filter_groups.enable=True \
+  +algorithm.filter_groups.metric=acc \
+  +algorithm.filter_groups.max_num_gen_batches=10 \
   reward.custom_reward_function.path="$REWARD_PATH" \
   reward.custom_reward_function.name=if_reward_fn \
   reward.reward_manager.source=register \
@@ -79,9 +105,7 @@ MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct}
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
   trainer.n_gpus_per_node=4 \
-  trainer.validation_data_dir="$CHECKPOINT_PATH/Validation_ifrl" \
+  trainer.validation_data_dir="$CHECKPOINT_PATH/Validation" \
   trainer.log_val_generations=8 \
   trainer.resume_mode=disable \
-  trainer.rollout_data_dir="$CHECKPOINT_PATH/rollouts" \
-  2>&1 | tee -a output-binary-test.txt
-
+  "$@"

@@ -1,4 +1,4 @@
-CHECKPOINT_ROOT="/mnt/tier2/project/p201382/erisa/IF_RL_test/if_rl_verl_binary_checkpoints"
+CHECKPOINT_ROOT="/mnt/tier2/project/p201382/erisa/IF_RL_dragon/checkpoints/dragon_ifrl/ifrl_qwen25_1nodes"
 MERGED_ROOT="${CHECKPOINT_ROOT}/merged_checkpoints"
 
 mkdir -p "$MERGED_ROOT"
