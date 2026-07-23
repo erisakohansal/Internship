@@ -24,9 +24,8 @@ def multi_domain_reward_fn(data_source, solution_str, ground_truth, extra_info=N
     the reward manager detokenizes the response before calling the scoring function.
     """
     reward_type = extra_info["agent_ref"]
-    # This is a placeholder for multi-domain reward logic.
-    # Implement domain-specific reward calculations here.
-    # For now, we return a default reward of 0.0.
+    # Dispatch to the domain-specific reward function based on the agent that
+    # produced the row (set identically by every FormatData.*_data formatter).
     match reward_type:
         case "workplace_assistant_simple_agent":
             return tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info)
@@ -34,6 +33,8 @@ def multi_domain_reward_fn(data_source, solution_str, ground_truth, extra_info=N
             return mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info)
         case "structured_outputs_simple_agent":
             return structured_reward_fn(data_source, solution_str, ground_truth, extra_info)
+        case _:
+            raise ValueError(f"Unknown agent_ref for reward dispatch: {reward_type!r}")
 
 
 # MCQA -------------------------------------------------------------------------------------
@@ -135,13 +136,15 @@ def _normalize_for_match(s: str) -> str:
 
 
 def _parse_answer_letter_strict_boxed(text: str, allowed_letters: set[str]) -> tuple[Optional[str], str, bool]:
-    # Strict boxed: capture a single UPPERCASE letter, allowing non-letter chars around it inside the box
+    # Strict boxed: capture a single UPPERCASE letter, allowing non-letter chars around it inside the box.
+    # Use the RIGHTMOST match so intermediate/scratch \boxed{} used during reasoning is ignored
+    # and only the final answer counts (matches NeMo-Gym mcqa/app.py behaviour).
     STRICT_BOXED_PATTERN = re.compile(r"\\boxed\{\s*[^A-Za-z]*([A-Z])[^A-Za-z]*\s*\}")
     parsed_text = text
-    m = STRICT_BOXED_PATTERN.search(text)
-    if not m:
+    matches = list(STRICT_BOXED_PATTERN.finditer(text))
+    if not matches:
         return None, parsed_text, True
-    letter = m.group(1).upper()
+    letter = matches[-1].group(1).upper()
     if letter not in allowed_letters:
         return None, parsed_text, True
     return letter, parsed_text, False
@@ -232,7 +235,6 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     # Fallback to existing grading_mode logic if template_metadata didn't work
     if pred is None:
         if grading_mode == "strict_single_letter_boxed":
-            assert False
             pred, _, _ = _parse_answer_letter_strict_boxed(solution_str, allowed_letters)
             print("\tparsed answer from strict_single_letter_boxed:", pred)
         elif grading_mode == "lenient_boxed":
@@ -278,7 +280,6 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     is_correct = (pred == gold) if (pred is not None and gold) else False
     reward = 1.0 if is_correct else 0.0
     print("\n\n\tpred:", pred, "gold:", gold, "reward:", reward)
-    assert False
     assert type(reward) is float
     return reward
 
@@ -293,6 +294,39 @@ def strictify_schema(schema: Dict[str, Any]):
             schema["additionalProperties"] = False
         for k, v in schema.items():
             strictify_schema(v)
+
+
+def _extract_json_object(text: str):
+    """Best-effort extraction of a single JSON object from a model completion.
+
+    Handles a bare JSON object, a ```json ... ``` fenced block, and leading
+    reasoning / <think>...</think> preamble by falling back to the substring
+    spanning the first '{' to the last '}'. Returns the parsed object or None.
+    """
+    # Drop a <think>...</think> block if present.
+    think_end = text.rfind("</think>")
+    if think_end != -1:
+        text = text[think_end + len("</think>"):]
+
+    # Prefer a fenced ```json ... ``` block if one exists.
+    fence = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+    candidates = []
+    if fence:
+        candidates.append(fence.group(1).strip())
+    candidates.append(text.strip())
+    # Last resort: the widest {...} span.
+    first, last = text.find("{"), text.rfind("}")
+    if first != -1 and last != -1 and last > first:
+        candidates.append(text[first:last + 1])
+
+    for cand in candidates:
+        try:
+            obj = json.loads(cand)
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if isinstance(obj, dict):
+            return obj
+    return None
 
 
 def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
@@ -320,12 +354,11 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
     strictify_schema(schema)
     print("strictified schema: ", schema)
 
-    try:
-        parsed = json.loads(solution_str)
-        print("parsed completion: ", parsed)
-    except Exception as e:
-        print(f"Error parsing completion: {type(e).__name__}: {str(e)[:200]}")
-        return 0.0 
+    parsed = _extract_json_object(solution_str)
+    if parsed is None:
+        print("Could not extract a JSON object from the completion")
+        return 0.0
+    print("parsed completion: ", parsed)
 
     try:
         validate_against_schema_openapi(parsed, schema)
@@ -370,10 +403,15 @@ def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
     ]
     tool_env = get_tools(toolkits)
 
-    # Execute the actions
+    # Execute the actions. `arguments` may arrive either as a JSON string (dataset
+    # ground_truth format) or as an already-parsed dict (predicted calls, which
+    # try_parse_tool_calls decodes) -- handle both, and default to no args if absent.
     for action in actions:
         try:
-            tool_env["functions"][action["name"]](**json.loads(action["arguments"]))
+            args = action.get("arguments", {})
+            if isinstance(args, str):
+                args = json.loads(args) if args.strip() else {}
+            tool_env["functions"][action["name"]](**args)
         except Exception as e:
             print("Error executing tool: ", e)
             continue
@@ -421,7 +459,7 @@ def get_tools(toolkits):
         tool_env["functions"]["email_delete_email"] = email.delete_email
         tool_env["functions"]["email_forward_email"] = email.forward_email
         tool_env["functions"]["email_reply_email"] = email.reply_email
-        tool_env["schemas"].extend(transform_tool_format(email_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(email_tool_schemas))
     if "calendar" in toolkits:
         calendar = CalendarTool()
         tool_env["containers"]["calendar"] = calendar
@@ -489,8 +527,17 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
 
     # should extract whats inside <tool_call> tags as the provided answer and compare to the ground_truth
     tool_calls = try_parse_tool_calls(solution_str)
+    # ground_truth is a list of {name, arguments} actions, but may arrive serialized
+    # as a JSON string after the parquet round-trip -- decode it if so.
+    gt_actions = ground_truth
+    if isinstance(gt_actions, str):
+        try:
+            gt_actions = json.loads(gt_actions)
+        except json.JSONDecodeError as e:
+            print("Error parsing ground_truth actions: ", e)
+            gt_actions = []
     predict_env = execute_actions_and_reset_state(tool_calls)
-    ground_truth_env = execute_actions_and_reset_state(ground_truth)
+    ground_truth_env = execute_actions_and_reset_state(gt_actions)
 
     def convert_strs_to_lowercase(df):
         # For some fields the case matters, so we don't convert them to lowercase
@@ -523,10 +570,12 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
         ground_truth_env["containers"]["customer_relationship_manager"]._crm_data
     )
 
-    return (
+    reward = float(
         predicted_calendar_state.equals(ground_truth_calendar_state)
         and predicted_email_state.equals(ground_truth_email_state)
         and predicted_analytics_state.equals(ground_truth_analytics_state)
         and predicted_project_management_state.equals(ground_truth_project_management_state)
         and predicted_customer_relationship_manager_state.equals(ground_truth_customer_relationship_manager_state)
     )
+    assert type(reward) is float
+    return reward

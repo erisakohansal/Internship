@@ -63,7 +63,8 @@ class FormatData:
 
     SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
     You are a helpful and harmless assistant.
-    The model outputs a tool call whose arguments must match a schema.
+    Your response must be a single JSON object that conforms exactly to the provided JSON schema.
+    Output only the JSON object, with no surrounding prose, explanation, or markdown code fences.
     """
 
 
@@ -207,11 +208,12 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
+                'agent_ref': 'workplace_assistant_simple_agent',  # reward dispatch key
                 'print_to_terminal': False,
                 'max_completion_length': 4000,
             },
         }
-    
+
 
     @staticmethod
     def mcqa_data(data, idx):
@@ -229,7 +231,8 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                
+                'agent_ref': 'mcqa_simple_agent',  # reward dispatch key
+
                 'reward_mode': 'strict_single_letter_boxed', # 4 options available, backup regex pattern
                 'template_metadata': data['template_metadata'],
                 'options': data['options'],
@@ -259,6 +262,7 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
+                'agent_ref': 'structured_outputs_simple_agent',  # reward dispatch key
                 'print_to_terminal': False,
                 'debug_path': 'if_reward_binary_verl.txt',
                 'max_completion_length': 4000,
