@@ -2,11 +2,13 @@
 
 set -e
 
-GPU_ID=0
-PORT=8002
+# scp -r -P 8822 -i ~/.ssh/id_ed25519_meluxina u104403@login.lxp.lu:/project/home/p201382/erisa/IF_RL_Binary /data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina
+
+GPU_ID=1
+PORT=8005
 
 BASE_MODEL="Qwen/Qwen2.5-1.5B-Instruct"
-MODEL_DIR="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL/if_rl_verl_binary_checkpoints/merged_checkpoints"
+MODEL_DIR="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL_Binary/no_ds/checkpoints/merged_checkpoints"
 OUT_DIR="${MODEL_DIR}/eval/ifeval"
 LOG_DIR="${MODEL_DIR}/logs/ifeval"
 
@@ -54,14 +56,6 @@ mkdir -p "$LOG_DIR"
 # wait "$VLLM_PID" 2>/dev/null || true
 
 # sleep 10
-
-# local-chat-completions ({'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'base_url': 'http://localhost:8002/v1/chat/completions'}), gen_kwargs: ({'temperature': 0.6, 'top_p': 0.95, 'do_sample': True, 'max_gen_toks': 2700}), limit: None, num_fewshot: None, batch_size: 1
-# |Tasks |Version|Filter|n-shot|        Metric         |   |Value |   |Stderr|
-# |------|------:|------|-----:|-----------------------|---|-----:|---|------|
-# |ifeval|      4|none  |     0|inst_level_loose_acc   |↑  |0.5755|±  |   N/A|
-# |      |       |none  |     0|inst_level_strict_acc  |↑  |0.5420|±  |   N/A|
-# |      |       |none  |     0|prompt_level_loose_acc |↑  |0.4750|±  |0.0215|
-# |      |       |none  |     0|prompt_level_strict_acc|↑  |0.4418|±  |0.0214|
 
 for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "global_step_*" | sort -V); do
     NAME=$(basename "$CKPT")
@@ -112,7 +106,7 @@ for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "global_step_*" | sort
         --output_path "$OUTPUT_PATH" \
         --log_samples \
         --apply_chat_template \
-        --gen_kwargs '{"temperature":0.6,"top_p":0.95,"do_sample":true,"max_gen_toks":2700}' \
+        --gen_kwargs '{"temperature":0.0,"do_sample":false,"max_gen_toks":2700}' \
         2>&1 | tee "$LOG_DIR/$MODEL_NAME.log"
 
         echo "Killing vLLM server..."
@@ -124,14 +118,3 @@ for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "global_step_*" | sort
     done
 
 echo "All evaluations finished."
-
-
-# (EngineCore pid=1172166) INFO 06-05 17:51:34 [gpu_model_runner.py:5746] Graph capturing finished in 7 secs, took 0.39 GiB
-# (EngineCore pid=1172166) INFO 06-05 17:51:34 [gpu_worker.py:617] CUDA graph pool memory: 0.39 GiB (actual), 0.39 GiB (estimated), difference: 0.0 GiB (0.0%).
-# (EngineCore pid=1172166) INFO 06-05 17:51:34 [core.py:281] init engine (profile, create kv cache, warmup model) took 12.25 seconds
-# (EngineCore pid=1172166) The tokenizer you are loading from 'IF-RL-Binary_checkpoints/checkpoint-2' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
-# (EngineCore pid=1172166) INFO 06-05 17:51:34 [vllm.py:754] Asynchronous scheduling is enabled.
-# (APIServer pid=1171865) INFO 06-05 17:51:34 [api_server.py:576] Supported tasks: ['generate']
-# (APIServer pid=1171865) WARNING 06-05 17:51:35 [model.py:1376] Default vLLM sampling parameters have been overridden by the model's `generation_config.json`: `{'repetition_penalty': 1.1, 'temperature': 0.7, 'top_k': 20, 'top_p': 0.8}`. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
-# (APIServer pid=1171865) The tokenizer you are loading from 'IF-RL-Binary_checkpoints/checkpoint-2' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
-# (APIServer pid=1171865) INFO 06-05 17:51:35 [hf.py:320] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
