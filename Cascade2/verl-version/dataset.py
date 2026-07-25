@@ -7,6 +7,21 @@ import json
 
 import os
 
+"""
+TODO
+no sandbox => confirmation YUP
+parallel_tool_call and strict, where to use? NO NEED, CONSTANTS
+tool structure => openai compatible YUP
+system_prompt in workplace agents!!!!!!
+how to include tools? in the system prompt? some other way? https://deepwiki.com/chengminhua/verl/7.4-chat-templates-and-tool-configuration
+Test the workplace setup :) DONE!, what's hermes style formatting? structured prompt list
+
+
+response_create_params has different fields for each task !!!
+IF => not allowed to use any tools???
+
+"""
+
 class FormatData:
 
     # Total languages in the dataset : 30
@@ -55,17 +70,15 @@ class FormatData:
     You are not allowed to use any tools.
     """ 
 
-    SYSTEM_PROMPT_MCQA = (
-    "You are solving a multiple-choice question. "
-    "Reason if needed, but your final answer must be exactly one option letter "
-    "inside LaTeX boxed format, for example: \\boxed{A}."
-    )
-
-    SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
-    You are a helpful and harmless assistant.
-    The model outputs a tool call whose arguments must match a schema.
+    SYSTEM_PROMPT_MCQA = """
+    You are solving a multiple-choice question. 
+    Reason if needed, but your final answer must be exactly one option letter inside LaTeX boxed format, for example: \\boxed{A}.
     """
 
+    SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
+    Your response must be a single JSON object that conforms exactly to the provided JSON schema.
+    Output only the JSON object, with no surrounding prose, explanation, or markdown code fences.
+    """
 
     dataset_languages = []
     filtered_languages = []
@@ -117,20 +130,6 @@ class FormatData:
             },
         }
 
-    """
-    TODO
-    no sandbox => confirmation YUP
-    parallel_tool_call and strict, where to use? NO NEED, CONSTANTS
-    tool structure => openai compatible YUP
-    system_prompt in workplace agents!!!!!!
-    how to include tools? in the system prompt? some other way? https://deepwiki.com/chengminhua/verl/7.4-chat-templates-and-tool-configuration
-    Test the workplace setup :) DONE!, what's hermes style formatting? structured prompt list
-
-
-    response_create_params has different fields for each task !!!
-    IF => not allowed to use any tools???
-    
-    """
 
     @staticmethod
     def transform_tool_format(tools):
@@ -155,51 +154,42 @@ class FormatData:
             )
         # "strict" and "parallel_tool_calls" are dropped -> Qwen doesn't use them
         return res
-    
-    @staticmethod
-    def build_tool_prompt(tools):
-        # tool format in Qwen2.5 is different from that of the nemotron dataset
-        new_tools = FormatData.transform_tool_format(tools)
-        tool_prompt = "\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:"
-        tool_prompt += "\n<tools>"
-        
-        for tool in new_tools:
-            try:
-                tools_json = json.dumps(tool, ensure_ascii=False)
-            except Exception:
-                # fallback to str representation if json fails
-                tools_json = str(tool)
-            tool_prompt += "\n" + tools_json 
-       
-        tool_prompt += "\n</tools>"
-        tool_prompt += "\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call>\n"
-
-        return tool_prompt
 
 
     @staticmethod
     def workplace_assistant_data(data, idx):
+        """
+        Related columns : 
+            - responses_create_params : contains system + user messages and list of tool schemas
+            - ground_truth : the tool call
+            - 
+        """
         assert len(data['responses_create_params']['input']) == 2
+        if data['ground_truth']:
+            assert len(data['ground_truth']) == 1
 
         # Extract system and user prompts
         input_msgs = data['responses_create_params']['input']
         system_prompt = input_msgs[0] if input_msgs[0]['role'] == 'system' else input_msgs[1]
         user_prompt = input_msgs[1] if input_msgs[0]['role'] == 'system' else input_msgs[0]
-            
-        tool_block = FormatData.build_tool_prompt(data['responses_create_params']['tools'])
-        system_prompt['content'] += "\n" + tool_block
+
+        tools = FormatData.transform_tool_format(data['response_create_params']['tools'])
 
         print("debug the workplace_assistant_data")
         print("\tSystem prompt: ", system_prompt)
         print("\tUser prompt: ", user_prompt)
+        print("\n\tTools (before):", data['response_create_params']['tools'])
+        print("\n\tTools (After):", tools)
 
         return {
+            'agent_name': 'multi_domain_agent',
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
                 system_prompt, 
                 user_prompt
             ],
-            'ability': data['category'].strip(),
+            'tools': tools,
+            'ability': data['agent_ref']['name'].strip(),
             'reward_model': {
                 'style': 'rule',
                 'ground_truth': data['ground_truth'], 
@@ -215,13 +205,27 @@ class FormatData:
 
     @staticmethod
     def mcqa_data(data, idx):
+        """
+        multi choice question answering, the model has to choose
+        the correct answer and provide it in \boxed{} format (or any
+        format available in the list of the 4 provided regex patterns).
+
+        related columns:
+            - responses_create_params : contains user message
+            - expected_answer : the correct option
+            - template_metadata : contains the output regex, if
+                                  not provided or problems encountered, 
+                                  fallback on reward_mode provided regex
+                                  pattern.
+            - options : choice of answers to the questions
+        """
         return {
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
                 {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_MCQA},
                 data['responses_create_params']['input'][0],
             ],
-            'ability': 'mcqa',
+            'ability': data['agent_ref']['name'].strip(),
             'reward_model': {
                 'style': 'rule',
                 'ground_truth': data['expected_answer'],
@@ -243,6 +247,13 @@ class FormatData:
 
     @staticmethod
     def structured_outputs_data(data, idx):
+        """
+        structured outputs in json format
+        related columns : 
+            - responses_create_params : contains user message
+            - schema_str : contains the outline of what the output 
+                           should look like in json format (json schema)
+        """
         if data['schema_type']: assert data['schema_type'].strip() == 'json'
 
         return {
@@ -251,7 +262,7 @@ class FormatData:
                 {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_STRUCTURED_OUTPUTS},
                 data['responses_create_params']['input'][0],
             ],
-            'ability': 'instruction_following',
+            'ability': data['agent_ref']['name'].strip(),
             'reward_model': {
                 'style': 'rule',
                 'ground_truth': data['schema_str'],
@@ -288,11 +299,13 @@ class FormatData:
             split="train",
         )
 
+        print("Dataset columns : ", data.column_names)
+        print("Raw dataset size : ", len(data))
+        print(data[0]["agent_ref"])
+
+
         match config:
             case "IF-RL":
-                print("Dataset columns : ", data.column_names)
-                print("Raw dataset size : ", len(data))
-
                 data = data.filter(FormatData.is_supported_language, load_from_cache_file=False,)
 
                 print("Filtered dataset size : ", len(data))
@@ -335,11 +348,11 @@ class FormatData:
         print("\tSize of the train split : ", len(train_set))
         print("\tSize of the test split : ", len(test_set))
 
-        train_set.to_parquet(os.path.join(local_dir, config+'-fraction-train.parquet'))
-        test_set.to_parquet(os.path.join(local_dir, config+'-fraction-test.parquet'))
+        # train_set.to_parquet(os.path.join(local_dir, config+'-fraction-train.parquet'))
+        # test_set.to_parquet(os.path.join(local_dir, config+'-fraction-test.parquet'))
         return train_set, test_set
 
 if __name__ == "__main__":
     # Uncomment one of the following:
-    FormatData.format_dataset_RL_Cascade2(config="IF-RL")
+    FormatData.format_dataset_RL_Cascade2(config="multi-domain-RL")
     # test_IF_RL_config()

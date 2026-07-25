@@ -340,24 +340,43 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
 
 def try_parse_tool_calls(content: str):
     """Try parse the tool calls.
-    source : https://colab.research.google.com/github/oliveirabruno01/unsloth-challenge/blob/main/Qwen2_5_1_5B_Tool_Calling.ipynb#scrollTo=AsF3E3RTes8w
+    sources : 
+    https://colab.research.google.com/github/oliveirabruno01/unsloth-challenge/blob/main/Qwen2_5_1_5B_Tool_Calling.ipynb#scrollTo=AsF3E3RTes8w
+    https://github.com/verl-project/verl/blob/983cb0f24443f87b3d161fad318445130a620b07/verl/experimental/agent_loop/tool_parser.py#L116
     """
+
+    tool_call_regex = re.compile(r"<tool_call>(.*?)</tool_call>", re.DOTALL)
+    matches = tool_call_regex.findall(content)
     tool_calls = []
-    for i, m in enumerate(re.finditer(r"<tool_call>\n(.+)?\n</tool_call>", content)): 
-        # better version? 
-        # re.finditer(
-        #     r"<tool_call>\s*(.*?)\s*</tool_call>",
-        #     content,
-        #     re.DOTALL,
-        # )
+    for match in matches: 
         try:
-            func = json.loads(m.group(1).strip())
-            if isinstance(func["arguments"], str): # sometimes the model may output a string containing json
-                func["arguments"] = json.loads(func["arguments"])
-            tool_calls.append(func)
-        except json.JSONDecodeError as e:
-            print(f"Failed to parse tool calls: the content is {m.group(1)} and {e}")
+            func = json.loads(match.strip())
+
+            if not isinstance(func, dict):
+                raise TypeError("Tool call must be a JSON object")
+
+            name = func["name"]
+            arguments = func["arguments"]
+
+            if not isinstance(name, str):
+                raise TypeError("Tool name must be a string")
+
+            # Sometimes arguments are emitted as a JSON-encoded string
+            if isinstance(arguments, str):
+                arguments = json.loads(arguments)
+
+            if not isinstance(arguments, dict):
+                raise TypeError("Tool arguments must be a JSON object")
+
+            tool_calls.append({
+                "name": name,
+                "arguments": arguments,
+            })
+
+        except Exception as e:
+            print(f"Failed to parse tool calls: the content is {match!r} and {e}")
             pass 
+
     return tool_calls
 
 def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
@@ -421,7 +440,7 @@ def get_tools(toolkits):
         tool_env["functions"]["email_delete_email"] = email.delete_email
         tool_env["functions"]["email_forward_email"] = email.forward_email
         tool_env["functions"]["email_reply_email"] = email.reply_email
-        tool_env["schemas"].extend(transform_tool_format(email_tool_schemas)
+        tool_env["schemas"].extend(transform_tool_format(email_tool_schemas))
     if "calendar" in toolkits:
         calendar = CalendarTool()
         tool_env["containers"]["calendar"] = calendar
