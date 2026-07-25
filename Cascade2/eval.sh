@@ -2,13 +2,26 @@
 
 set -e
 
-# scp -r -P 8822 -i ~/.ssh/id_ed25519_meluxina u104403@login.lxp.lu:/project/home/p201382/erisa/IF_RL_Binary /data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina
+
+for i in $(seq 90 10 180); do
+
+    scp -r -P 8822 -i ~/.ssh/id_ed25519_meluxina \
+    u104403@login.lxp.lu:/project/home/p201382/erisa/IF_RL_Fraction/with_ds/checkpoints/merged_checkpoints/global_step_${i}  \
+    /data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL_Fraction/with_ds/checkpoints/merged_checkpoints/global_step_${i}
+
+    if [ $? -eq 0 ]; then
+        echo "Checkpoint global_step_${i} transferred to hippo"
+    else
+        echo "FAILED: global_step_${i}"
+        failed+=("$i")
+    fi
+done
 
 GPU_ID=1
 PORT=8005
 
 BASE_MODEL="Qwen/Qwen2.5-1.5B-Instruct"
-MODEL_DIR="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL_Binary/no_ds/checkpoints/merged_checkpoints"
+MODEL_DIR="/data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL_Fraction/with_ds/checkpoints/merged_checkpoints"
 OUT_DIR="${MODEL_DIR}/eval/ifeval"
 LOG_DIR="${MODEL_DIR}/logs/ifeval"
 
@@ -118,3 +131,12 @@ for CKPT in $(find "$MODEL_DIR" -maxdepth 1 -type d -name "global_step_*" | sort
     done
 
 echo "All evaluations finished."
+
+# 2026-07-25:02:03:38 INFO     [loggers.evaluation_tracker:119] Saving per-task samples to /data/home/erisa.kohansal/Workplace/Cascade2/verl-version/Meluxina/IF_RL_Fraction/with_ds/checkpoints/merged_checkpoints/eval/ifeval/global_step_80/*.jsonl
+# local-chat-completions ({'model': 'global_step_80', 'base_url': 'http://localhost:8005/v1/chat/completions'}), gen_kwargs: ({'temperature': 0.0, 'do_sample': False, 'max_gen_toks': 2700}), limit: None, num_fewshot: None, batch_size: 1
+# |Tasks |Version|Filter|n-shot|        Metric         |   |Value |   |Stderr|
+# |------|------:|------|-----:|-----------------------|---|-----:|---|------|
+# |ifeval|      4|none  |     0|inst_level_loose_acc   |↑  |0.7506|±  |   N/A|
+# |      |       |none  |     0|inst_level_strict_acc  |↑  |0.7290|±  |   N/A|
+# |      |       |none  |     0|prompt_level_loose_acc |↑  |0.6451|±  |0.0206|
+# |      |       |none  |     0|prompt_level_strict_acc|↑  |0.6192|±  |0.0209|

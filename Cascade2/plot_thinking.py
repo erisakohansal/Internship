@@ -366,7 +366,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=project_directory / "if_rl_binary_comparison.png",
+        default=project_directory / "if_rl_comparison.png",
     )
 
     args = parser.parse_args()
@@ -519,7 +519,7 @@ def main() -> None:
 
     plt.xlabel("Checkpoint step")
     plt.ylabel(args.metric.replace("_", " ").title())
-    plt.title("IFEval checkpoint comparison of IF-RL (temp=0)")
+    plt.title("IFEval Checkpoint Comparison of IF-RL Binary Reward (temp=0)")
     plt.xticks(all_steps)
     plt.ylim(0, 1)
     plt.grid(alpha=0.3)
