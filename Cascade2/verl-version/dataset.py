@@ -137,7 +137,7 @@ class FormatData:
         the tools in the nemotron dataset are in a 
         different format than what Qwen2.5 expects, 
         so we need to transform them into the expected format.
-        From Hermes style to OpenAI style 
+        From OpenAI responses API tool format to OpenAI chat completions-style tool format 
         """
         # format of the dicts
         res = []
@@ -159,36 +159,82 @@ class FormatData:
     @staticmethod
     def workplace_assistant_data(data, idx):
         """
-        Related columns : 
-            - responses_create_params : contains system + user messages and list of tool schemas
-            - ground_truth : the tool call
-            - 
+        Relevant columns:
+            - responses_create_params:
+                system/user messages and tool schemas
+            - ground_truth:
+                list of reference tool actions; may contain 0–8 actions
+            - category:
+                Workplace subdomain, such as email or calendar
+            - environment_name:
+                Workplace environment identifier
+            - agent_ref:
+                original NeMo agent metadata
         """
-        assert len(data['responses_create_params']['input']) == 2
-        if data['ground_truth']:
-            assert len(data['ground_truth']) == 1
+        params = data["responses_create_params"]
 
-        # Extract system and user prompts
-        input_msgs = data['responses_create_params']['input']
-        system_prompt = input_msgs[0] if input_msgs[0]['role'] == 'system' else input_msgs[1]
-        user_prompt = input_msgs[1] if input_msgs[0]['role'] == 'system' else input_msgs[0]
+        # Validate and extract the prompt.
+        input_msgs = params["input"]
+        assert len(input_msgs) == 2
 
-        tools = FormatData.transform_tool_format(data['response_create_params']['tools'])
+        system_msgs = [
+            dict(message)
+            for message in input_msgs
+            if message["role"] == "system"
+        ]
+        user_msgs = [
+            dict(message)
+            for message in input_msgs
+            if message["role"] == "user"
+        ]
+
+        assert len(system_msgs) == 1
+        assert len(user_msgs) == 1
+
+        system_prompt = system_msgs[0]
+        user_prompt = user_msgs[0]
+
+        # Convert Responses API schemas to the format used by VERL/Qwen.
+        transformed_tools = FormatData.transform_tool_format(
+            params.get("tools", [])
+        )
+
+        tool_names = [
+            tool["function"]["name"]
+            for tool in transformed_tools
+        ]
+
+        assert len(tool_names) == len(set(tool_names)), (
+            f"Duplicate tool names for sample {idx}"
+        )
+
+        # Validate reference actions without assuming there is only one.
+        ground_truth = data.get("ground_truth") or []
+        assert isinstance(ground_truth, list)
+
+        for action in ground_truth:
+            assert isinstance(action, dict)
+            assert isinstance(action.get("name"), str)
+            assert isinstance(action.get("arguments"), str)
+
+            # NeMo's verifier later calls json.loads() on this field.
+            parsed_arguments = json.loads(action["arguments"])
+            assert isinstance(parsed_arguments, dict)
 
         print("debug the workplace_assistant_data")
         print("\tSystem prompt: ", system_prompt)
         print("\tUser prompt: ", user_prompt)
         print("\n\tTools (before):", data['response_create_params']['tools'])
-        print("\n\tTools (After):", tools)
+        print("\n\tTools (After):", transformed_tools)
 
         return {
-            'agent_name': 'multi_domain_agent',
+            'agent_name': 'tool_agent',
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
                 system_prompt, 
                 user_prompt
             ],
-            'tools': tools,
+            'tools': transformed_tools,
             'ability': data['agent_ref']['name'].strip(),
             'reward_model': {
                 'style': 'rule',
@@ -197,7 +243,8 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'print_to_terminal': False,
+                'agent_ref': data['agent_ref']['name'].strip(),
+                'category': data['category'],
                 'max_completion_length': 4000,
             },
         }
@@ -238,8 +285,7 @@ class FormatData:
                 'template_metadata': data['template_metadata'],
                 'options': data['options'],
 
-                'print_to_terminal': False,
-                'debug_path': 'if_reward_binary_verl.txt',
+                'agent_ref': data['agent_ref']['name'].strip(),
                 'max_completion_length': 4000,
             },
         }
@@ -270,8 +316,7 @@ class FormatData:
             'extra_info': {
                 'split': 'train',
                 'index': idx,
-                'print_to_terminal': False,
-                'debug_path': 'if_reward_binary_verl.txt',
+                'agent_ref': data['agent_ref']['name'].strip(),
                 'max_completion_length': 4000,
             },
         }
