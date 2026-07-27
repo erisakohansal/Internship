@@ -1,7 +1,10 @@
 from openapi_schema_validator import validate as validate_against_schema_openapi
 import json
 import re
+import asyncio
 from typing import Any, Dict, List, Optional, Tuple
+from verl.tools.base_tool import BaseTool, OpenAIFunctionToolSchema
+from verl.tools.schemas import ToolResponse
 from tools.analytics import AnalyticsTool, analytics_tool_schemas
 from tools.calendar import CalendarTool, calendar_tool_schemas
 from tools.company_directory import CompanyDirectoryTool, company_directory_tool_schemas
@@ -15,6 +18,11 @@ from tools.project_management import ProjectManagementTool, project_management_t
 
 """
 apparently there is what's called an in memory sandbox necessary here, look into it
+nemo gym uses in-memory DataFrame
+So you need two distinct uses of `get_tools()`:
+
+1. **During rollout:** one live environment shared across all steps of that trajectory.
+2. **During reward verification:** fresh environments used to replay and compare predicted versus ground-truth actions.
 """
 
 def multi_domain_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
@@ -23,13 +31,10 @@ def multi_domain_reward_fn(data_source, solution_str, ground_truth, extra_info=N
     extra_info : dataset metadata
     the reward manager detokenizes the response before calling the scoring function.
     """
-    reward_type = extra_info["agent_ref"]
-    # This is a placeholder for multi-domain reward logic.
-    # Implement domain-specific reward calculations here.
-    # For now, we return a default reward of 0.0.
-    match reward_type:
+
+    match extra_info["agent_ref"]:
         case "workplace_assistant_simple_agent":
-            return tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info)
+            return workplace_reward_fn(data_source, solution_str, ground_truth, extra_info)
         case "mcqa_simple_agent":
             return mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info)
         case "structured_outputs_simple_agent":
@@ -338,6 +343,85 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
 
 # TOOL CALLING ---------------------------------------------------------------------------
 
+class WorkplaceTool(BaseTool):
+    WORKPLACE_TOOLKITS = [
+        "email",
+        "calendar",
+        "analytics",
+        "project_management",
+        "customer_relationship_manager",
+    ]
+
+    async def execute(self, instance_id: str, parameters: dict[str, Any], **kwargs) -> tuple[ToolResponse, float, dict]:
+        """Execute the tool.
+
+        Args:
+            instance_id: The instance id of the tool.
+            parameters: The json string of the parameters of the tool.
+
+        Returns: tool_response, tool_reward_score, tool_metrics
+            tool_response: The ToolResponse object containing text, image, and/or video content.
+            tool_reward_score: The step reward score of the tool.
+            tool_metrics: The metrics of the tool.
+
+        - We would need a per-rollout asyncio.Lock only if you allowed multiple tool calls 
+        from the same assistant turn to execute concurrently against the same environment
+        but with max_parallel_calls: 1, only one tool call accesses a rollout’s environment at a time
+        - We would need a per-rollout asyncio.Lock only if you allowed multiple tool calls from the 
+        same assistant turn to execute concurrently against the same environment
+        - await asyncio.to_thread(...) waits for that tool function to finish before the rollout continues
+        """
+        agent_data = kwargs["agent_data"]
+
+        # First tool call: create this rollout's environment.
+        # Later calls: retrieve the same environment.
+        if not hasattr(agent_data, "_workplace_env"):
+            agent_data._workplace_env = await asyncio.to_thread(
+                get_tools,
+                self.WORKPLACE_TOOLKITS,
+            )
+
+        workplace_env = agent_data._workplace_env
+
+        # Preserve the action history for episodic verification.
+        agent_data.extra_fields.setdefault(
+            "predicted_actions",
+            [],
+        ).append(
+            {
+                "name": self.name,
+                "arguments": json.dumps(
+                    parameters,
+                    ensure_ascii=False,
+                ),
+            }
+        )
+        try:
+            function = workplace_env["functions"][self.name]
+
+            result = await asyncio.to_thread(
+                function,
+                **parameters,
+            )
+
+            observation = (
+                result
+                if isinstance(result, str) # i think in nemo gym they don't even consider the str case? safe to assume always json?
+                else json.dumps(
+                    result,
+                    ensure_ascii=False, # ensure_ascii=False keeps non-ASCII text readable—for example, "réunion" stays "réunion" instead of becoming Unicode escape sequences.
+                    default=str,
+                )
+            )
+
+        except Exception as e:
+            print(f"Error executing tool '{self.name}': {e}")
+            observation = f"Error executing tool '{self.name}': {e}"
+
+        # do we need to update agent_data._workplace_env?
+        return ToolResponse(text=observation), 0.0, {} # model observation, step-level tool rewards, tool metrics
+
+
 def try_parse_tool_calls(content: str):
     """Try parse the tool calls.
     sources : 
@@ -489,7 +573,7 @@ def get_tools(toolkits):
         tool_env["schemas"].extend(transform_tool_format(customer_relationship_manager_tool_schemas))
     return tool_env
 
-def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
+def workplace_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     """
     TODO:
     VERL rollout produces solution_str DONE
@@ -507,8 +591,8 @@ def tool_call_reward_fn(data_source, solution_str, ground_truth, extra_info=None
     """
 
     # should extract whats inside <tool_call> tags as the provided answer and compare to the ground_truth
-    tool_calls = try_parse_tool_calls(solution_str)
-    predict_env = execute_actions_and_reset_state(tool_calls)
+    # tool_calls = try_parse_tool_calls(solution_str)
+    predict_env = execute_actions_and_reset_state(extra_info.get("predicted_actions", []))
     ground_truth_env = execute_actions_and_reset_state(ground_truth)
 
     def convert_strs_to_lowercase(df):

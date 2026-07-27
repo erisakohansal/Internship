@@ -48,6 +48,7 @@ python3 -m verl.trainer.main_ppo \
   data.prompt_key=prompt \
   data.max_prompt_length=${MAX_PROMPT_LEN} \
   data.max_response_length=${MAX_RESPONSE_LEN} \
+  data.return_raw_chat=True \
   actor_rollout_ref.hybrid_engine=True \
   actor_rollout_ref.model.path=${MODEL_PATH} \
   actor_rollout_ref.model.use_remove_padding=True \
@@ -79,6 +80,13 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.max_model_len=${MAX_MODEL_LEN} \
   actor_rollout_ref.rollout.calculate_log_probs=False \
   actor_rollout_ref.actor.fsdp_config.model_dtype=fp32 \
+  actor_rollout_ref.rollout.multi_turn.enable=True \
+  actor_rollout_ref.rollout.multi_turn.max_assistant_turns=6 \
+  actor_rollout_ref.rollout.multi_turn.max_user_turns=1 \
+  actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 \
+  actor_rollout_ref.rollout.multi_turn.max_tool_response_length=??? \
+  actor_rollout_ref.rollout.multi_turn.format="hermes" \
+  tool_response truncate left   
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=False \
   algorithm.rollout_correction.rollout_is=null \
