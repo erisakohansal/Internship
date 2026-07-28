@@ -26,6 +26,7 @@ CALCULATOR = {
             "required": ["expression"],
             "additionalProperties": False,
         },
+        "strict": False,
     },
 }
 
