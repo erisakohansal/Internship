@@ -221,8 +221,8 @@ tools:
           type: "object"
           properties: 
             event_id: 
-              type": "string"
-              description": "8-digit ID of the event"
+              type: "string"
+              description: "8-digit ID of the event"
           required: ["event_id"]
           additionalProperties: false
         strict: false
@@ -240,7 +240,7 @@ tools:
           properties: 
             event_id: 
               type: "string"
-              description": "8-digit ID of the event"
+              description: "8-digit ID of the event"
             field: 
               type: "string"
               description: "Field to update. Available fields are: 'event_name', 'participant_email', 'event_start', 'duration'"
@@ -377,8 +377,8 @@ tools:
               type: "string"
               description: "Notes about the customer"
             follow_up_by: 
-              "type": "string"
-              "description": "Date for the next follow up. Format: YYYY-MM-DD"
+              type: "string"
+              description: "Date for the next follow up. Format: YYYY-MM-DD"
           required: [
             "customer_name",
             "assigned_to_email",
@@ -504,7 +504,7 @@ tools:
     tool_schema:
       type: "function"
       function:
-        name": "email_forward_email"
+        name: "email_forward_email"
         description: "Forwards an email to the specified recipient."
         parameters: 
           type: "object"

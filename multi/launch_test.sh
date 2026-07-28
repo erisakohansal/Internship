@@ -7,9 +7,9 @@
 #SBATCH -A p201382
 #SBATCH -q default
 #SBATCH --time 3:00:00
-#SBATCH --job-name=workplace_assistant
-#SBATCH --output=slurm/logs/workplace_assistant_%j.out
-#SBATCH --error=slurm/logs/workplace_assistant_%j.err
+#SBATCH --job-name=calculator
+#SBATCH --output=slurm/logs/calculator_%j.out
+#SBATCH --error=slurm/logs/calculator_%j.err
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=erisa.kohansal@linguacustodia.com
 
@@ -23,7 +23,7 @@ module load CMake/3.29.3-GCCcore-13.3.0
 module load Ninja/1.12.1-GCCcore-13.3.0
 
 source /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin/activate
-PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL"
+PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi"
 cd $PWD
 
 export PYTHONPATH=""
@@ -33,9 +33,9 @@ export TOKENIZERS_PARALLELISM=false
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-Domain-RL/checkpoints"
-TRAIN_FILE="$PWD/workplace-train.parquet"
-TEST_FILE="$PWD/workplace-test.parquet"
+CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-turn/checkpoints"
+TRAIN_FILE="$PWD/gsm8k-train.parquet" 
+TEST_FILE="$PWD/gsm8k-test.parquet" 
 MAX_PROMPT_LEN=5000
 MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
@@ -59,7 +59,7 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.actor.clip_ratio_high=0.28 \
   actor_rollout_ref.actor.loss_agg_mode=token-mean \
   actor_rollout_ref.actor.ppo_mini_batch_size=128 \
-  actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=2 \
+  actor_rollout_ref.actor.dynamic_batchsz=True \
   actor_rollout_ref.actor.ppo_epochs=1 \
   actor_rollout_ref.actor.entropy_coeff=0.0 \
   actor_rollout_ref.actor.optim.lr=3e-6 \
@@ -74,21 +74,21 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.val_kwargs.temperature=0.0 \
   actor_rollout_ref.rollout.val_kwargs.do_sample=False \
   actor_rollout_ref.rollout.n=1 \
-  actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
+  actor_rollout_ref.rollout.dynamic_bsz=True \
   actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
   actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
   actor_rollout_ref.rollout.max_model_len=${MAX_MODEL_LEN} \
-  actor_rollout_ref.rollout.calculate_log_probs=False \
+  actor_rollout_ref.rollout.calculate_log_probs=True \
   actor_rollout_ref.actor.fsdp_config.model_dtype=fp32 \
+  actor_rollout_ref.rollout.mode=async \
   actor_rollout_ref.rollout.multi_turn.enable=True \
-  actor_rollout_ref.rollout.multi_turn.max_assistant_turns=6 \
-  actor_rollout_ref.rollout.multi_turn.max_user_turns=5 \
-  actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 \
-  actor_rollout_ref.rollout.multi_turn.max_tool_response_length=2048 \
   actor_rollout_ref.rollout.multi_turn.format=hermes \
+  actor_rollout_ref.rollout.multi_turn.function_tool_path="$PWD/tool.py" \
+  actor_rollout_ref.rollout.multi_turn.max_user_turns=3 \
+  actor_rollout_ref.rollout.multi_turn.max_assistant_turns=4 \
+  actor_rollout_ref.rollout.agent.default_agent_loop=tool_agent \
+  actor_rollout_ref.rollout.multi_turn.max_tool_response_length=256 \
   actor_rollout_ref.rollout.multi_turn.tool_response_truncate_side=middle \
-  actor_rollout_ref.rollout.multi_turn.tool_config_path="$PWD/tools.yaml" \
-  actor_rollout_ref.rollout.multi_turn.use_inference_chat_template=False \
   actor_rollout_ref.rollout.multi_turn.tokenization_sanity_check_mode=strict \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=False \
@@ -100,19 +100,15 @@ python3 -m verl.trainer.main_ppo \
   +algorithm.filter_groups.metric=acc \
   +algorithm.filter_groups.max_num_gen_batches=10 \
   reward.custom_reward_function.path="$REWARD_PATH" \
-  reward.custom_reward_function.name=multi_domain_reward_fn \
-  reward.reward_manager.source=register \
-  reward.reward_manager.name=dapo_overlong_penalty \
-  +reward.reward_kwargs.max_resp_len=${MAX_RESPONSE_LEN} \
-  +reward.reward_kwargs.overlong_penalty.enable=True \
-  +reward.reward_kwargs.overlong_penalty.log=True \
+  reward.custom_reward_function.name=calculator_reward_fn \
+  reward.reward_manager=dapo \
   trainer.total_training_steps=20 \
   trainer.save_freq=5 \
   trainer.val_before_train=True \
   trainer.test_freq=5 \
   trainer.default_local_dir="$CHECKPOINT_PATH" \
-  trainer.project_name=multi_domain_rl \
-  trainer.experiment_name=multi_domain_rl \
+  trainer.project_name=multiturn \
+  trainer.experiment_name=multiturn \
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
   trainer.n_gpus_per_node=4 \
