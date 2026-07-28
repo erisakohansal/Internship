@@ -6,10 +6,10 @@
 #SBATCH -p gpu
 #SBATCH -A p201382
 #SBATCH -q default
-#SBATCH --time 10:00:00
-#SBATCH --job-name=multi_domain_rl
-#SBATCH --output=slurm/logs/multi_domain_%j.out
-#SBATCH --error=slurm/logs/multi_domain_rl_%j.err
+#SBATCH --time 3:00:00
+#SBATCH --job-name=workplace_assistant
+#SBATCH --output=slurm/logs/workplace_assistant_%j.out
+#SBATCH --error=slurm/logs/workplace_assistant_%j.err
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=erisa.kohansal@linguacustodia.com
 
@@ -34,8 +34,8 @@ REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
 CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-Domain-RL/checkpoints"
-TRAIN_FILE="$PWD/multi-domain-train.parquet"
-TEST_FILE="$PWD/multi-domain-test.parquet"
+TRAIN_FILE="$PWD/workplace-train.parquet"
+TEST_FILE="$PWD/workplace-test.parquet"
 MAX_PROMPT_LEN=5000
 MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
@@ -73,7 +73,7 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.do_sample=True \
   actor_rollout_ref.rollout.val_kwargs.temperature=0.0 \
   actor_rollout_ref.rollout.val_kwargs.do_sample=False \
-  actor_rollout_ref.rollout.n=16 \
+  actor_rollout_ref.rollout.n=1 \
   actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=2 \
   actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
   actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
@@ -82,15 +82,14 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.actor.fsdp_config.model_dtype=fp32 \
   actor_rollout_ref.rollout.multi_turn.enable=True \
   actor_rollout_ref.rollout.multi_turn.max_assistant_turns=6 \
-  actor_rollout_ref.rollout.multi_turn.max_user_turns=1 \
+  actor_rollout_ref.rollout.multi_turn.max_user_turns=5 \
   actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 \
-  actor_rollout_ref.rollout.multi_turn.max_tool_response_length=??? \
-  actor_rollout_ref.rollout.multi_turn.format="hermes" \
-  actor_rollout_ref.rollout.multi_turn.tool_response_truncate_side=??? \
-  actor_rollout_ref.rollout.multi_turn.tool_config_path="$PWD/reward.py" \
-  actor_rollout_ref.rollout.multi_turn.use_inference_chat_template=?? \
-  actor_rollout_ref.rollout.multi_turn.tokenization_sanity_check_mode=??? \
-  actor_rollout_ref.rollout.multi_turn.num_repeat_rollouts=??? \
+  actor_rollout_ref.rollout.multi_turn.max_tool_response_length=2048 \
+  actor_rollout_ref.rollout.multi_turn.format=hermes \
+  actor_rollout_ref.rollout.multi_turn.tool_response_truncate_side=middle \
+  actor_rollout_ref.rollout.multi_turn.tool_config_path="$PWD/tools.yaml" \
+  actor_rollout_ref.rollout.multi_turn.use_inference_chat_template=False \
+  actor_rollout_ref.rollout.multi_turn.tokenization_sanity_check_mode=strict \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=False \
   algorithm.rollout_correction.rollout_is=null \
@@ -101,22 +100,22 @@ python3 -m verl.trainer.main_ppo \
   +algorithm.filter_groups.metric=acc \
   +algorithm.filter_groups.max_num_gen_batches=10 \
   reward.custom_reward_function.path="$REWARD_PATH" \
-  reward.custom_reward_function.name=if_reward_fn \
+  reward.custom_reward_function.name=multi_domain_reward_fn \
   reward.reward_manager.source=register \
   reward.reward_manager.name=dapo_overlong_penalty \
   +reward.reward_kwargs.max_resp_len=${MAX_RESPONSE_LEN} \
   +reward.reward_kwargs.overlong_penalty.enable=True \
   +reward.reward_kwargs.overlong_penalty.log=True \
-  trainer.total_training_steps=70 \
-  trainer.save_freq=10 \
+  trainer.total_training_steps=20 \
+  trainer.save_freq=5 \
   trainer.val_before_train=True \
-  trainer.test_freq=10 \
+  trainer.test_freq=5 \
   trainer.default_local_dir="$CHECKPOINT_PATH" \
   trainer.project_name=multi_domain_rl \
   trainer.experiment_name=multi_domain_rl \
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
-  trainer.n_gpus_per_node=4 \
+  trainer.n_gpus_per_node=1 \
   trainer.validation_data_dir="$CHECKPOINT_PATH/Validation" \
   trainer.log_val_generations=8 \
   trainer.resume_mode=disable \

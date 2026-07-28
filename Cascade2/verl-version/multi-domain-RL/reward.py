@@ -488,18 +488,33 @@ def transform_tool_format(tools):
     the tools in the nemotron dataset are in a 
     different format than what Qwen2.5 expects, 
     so we need to transform them into the expected format.
-    From Hermes style to OpenAI style 
+    Dataset:
+        - OpenAI Responses-style flat tool schema
+        - https://github.com/openai/openai-python/blob/main/src/openai/types/responses/function_tool_param.py
+
+    Qwen/VeRL:
+        - OpenAI Chat Completions-style nested schema
+        - https://github.com/openai/openai-python/blob/main/src/openai/types/chat/chat_completion_function_tool_param.py
     """
     # format of the dicts
     res = []
     for tool in tools:
+        assert tool["type"] == "function"
         res.append(
             {
                 "type": tool["type"],
                 "function": {
                     "name": tool["name"],
-                    "description": tool["description"],
-                    "parameters": tool["parameters"],
+                    "description": tool.get("description", ""),
+                    "parameters": tool.get(
+                        "parameters", 
+                        {
+                            "type": "object",
+                            "properties": {},
+                            "required": [],
+                        }
+                    ),
+                    "strict": tool.get("strict", False)
                 }
             }
         )
@@ -576,23 +591,10 @@ def get_tools(toolkits):
 
 def workplace_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     """
-    TODO:
-    VERL rollout produces solution_str DONE
-        ↓
-    your parser extracts <tool_call>...</tool_call> DONE, try_parse_tool_calls
-        ↓
-    your reward function creates two fresh in-memory workbench envs
-        ↓
-    execute predicted calls in env A
-    execute ground-truth calls in env B
-        ↓
-    compare states
-        ↓
-    return 1.0 or 0.0
+    1. extra_info["predicted_actions"] contains the trace of the tool calls
+    2. execute the predicted actions history + the ground_truth 
+    3. compare the results
     """
-
-    # should extract whats inside <tool_call> tags as the provided answer and compare to the ground_truth
-    # tool_calls = try_parse_tool_calls(solution_str)
     predict_env = execute_actions_and_reset_state(extra_info.get("predicted_actions", []))
     ground_truth_env = execute_actions_and_reset_state(ground_truth)
 
