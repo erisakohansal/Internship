@@ -484,6 +484,7 @@ def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
 
 def transform_tool_format(tools):
     """
+    https://deepwiki.com/QwenLM/Qwen2.5/2.2-function-calling-and-tool-use
     the tools in the nemotron dataset are in a 
     different format than what Qwen2.5 expects, 
     so we need to transform them into the expected format.

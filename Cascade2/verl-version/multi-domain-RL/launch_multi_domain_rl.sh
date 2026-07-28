@@ -86,7 +86,11 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 \
   actor_rollout_ref.rollout.multi_turn.max_tool_response_length=??? \
   actor_rollout_ref.rollout.multi_turn.format="hermes" \
-  tool_response truncate left   
+  actor_rollout_ref.rollout.multi_turn.tool_response_truncate_side=??? \
+  actor_rollout_ref.rollout.multi_turn.tool_config_path="$PWD/reward.py" \
+  actor_rollout_ref.rollout.multi_turn.use_inference_chat_template=?? \
+  actor_rollout_ref.rollout.multi_turn.tokenization_sanity_check_mode=??? \
+  actor_rollout_ref.rollout.multi_turn.num_repeat_rollouts=??? \
   algorithm.adv_estimator=grpo \
   algorithm.use_kl_in_reward=False \
   algorithm.rollout_correction.rollout_is=null \

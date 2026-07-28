@@ -152,20 +152,20 @@ class ProjectManagementTool:
 schema_get_task_information_by_id = {
     "type": "function",
     "name": "project_management_get_task_information_by_id",
-    "description": "Returns the task information for a given ID.",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "task_id": {"type": "string", "description": "8-digit ID of the task"},
-            "field": {
-                "type": "string",
-                "description": "Field to return. Available fields are: 'task_id', 'task_name', 'assigned_to_email', 'list_name', 'due_date', 'board'",
+        "description": "Returns the task information for a given ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "task_id": {"type": "string", "description": "8-digit ID of the task"},
+                "field": {
+                    "type": "string",
+                    "description": "Field to return. Available fields are: 'task_id', 'task_name', 'assigned_to_email', 'list_name', 'due_date', 'board'",
+                },
             },
+            "required": ["task_id", "field"],
+            "additionalProperties": False,
         },
-        "required": ["task_id", "field"],
-        "additionalProperties": False,
-    },
-    "strict": False,
+        "strict": False,
 }
 
 schema_search_tasks = {
