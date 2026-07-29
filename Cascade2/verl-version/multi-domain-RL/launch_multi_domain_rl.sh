@@ -102,6 +102,9 @@ python3 -m verl.trainer.main_ppo \
   reward.custom_reward_function.name=multi_domain_reward_fn \
   reward.reward_manager.source=register \
   reward.reward_manager.name=dapo_overlong_penalty \
+  +reward.reward_kwargs.max_resp_len=${MAX_RESPONSE_LEN} \
+  +reward.reward_kwargs.overlong_penalty.enable=True \
+  +reward.reward_kwargs.overlong_penalty.log=True \
   trainer.total_training_steps=70 \
   trainer.save_freq=5 \
   trainer.val_before_train=True \
