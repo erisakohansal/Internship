@@ -72,7 +72,7 @@ class FormatData:
 
     SYSTEM_PROMPT_MCQA = """
     You are solving a multiple-choice question. 
-    Reason if needed, but your final answer must be exactly one option letter inside LaTeX boxed format, for example: \\boxed{A}.
+    RYou may reason before answering but your final answer must be exactly one option letter inside LaTeX boxed format, for example: \\boxed{A}.
     """
 
     SYSTEM_PROMPT_STRUCTURED_OUTPUTS = """
@@ -129,32 +129,7 @@ class FormatData:
                 'max_completion_length': 4000,
             },
         }
-
-
-    @staticmethod
-    def transform_tool_format(tools):
-        """
-        the tools in the nemotron dataset are in a 
-        different format than what Qwen2.5 expects, 
-        so we need to transform them into the expected format.
-        From OpenAI responses API tool format to OpenAI chat completions-style tool format 
-        """
-        # format of the dicts
-        res = []
-        for tool in tools:
-            res.append(
-                {
-                    "type": tool["type"],
-                    "function": {
-                        "name": tool["name"],
-                        "description": tool["description"],
-                        "parameters": tool["parameters"],
-                    }
-                }
-            )
-        # "strict" and "parallel_tool_calls" are dropped -> Qwen doesn't use them
-        return res
-
+    
 
     @staticmethod
     def workplace_assistant_data(data, idx):
@@ -163,13 +138,16 @@ class FormatData:
             - responses_create_params:
                 system/user messages and tool schemas
             - ground_truth:
-                list of reference tool actions; may contain 0–8 actions
+                list of reference tool actions; may contain 0-8 actions
             - category:
                 Workplace subdomain, such as email or calendar
             - environment_name:
                 Workplace environment identifier
             - agent_ref:
                 original NeMo agent metadata
+        The YAML registers tool implementations and schemas globally.
+        This row selects the tools available for this particular prompt.
+        https://github.com/verl-project/verl/blob/v0.5.0/examples/sglang_multiturn/config/tool_config/gsm8k_tool_config.yaml#L6
         """
         params = data["responses_create_params"]
 
@@ -194,14 +172,9 @@ class FormatData:
         system_prompt = system_msgs[0]
         user_prompt = user_msgs[0]
 
-        # Convert Responses API schemas to the format used by VERL/Qwen.
-        transformed_tools = FormatData.transform_tool_format(
-            params.get("tools", [])
-        )
-
         tool_names = [
-            tool["function"]["name"]
-            for tool in transformed_tools
+            tool["name"]
+            for tool in params.get("tools", [])
         ]
 
         assert len(tool_names) == len(set(tool_names)), (
@@ -209,23 +182,31 @@ class FormatData:
         )
 
         # Validate reference actions without assuming there is only one.
-        ground_truth = data.get("ground_truth") or []
+        # Do not use `or []`, because that could hide invalid falsy values.
+        ground_truth = data.get("ground_truth")
+        if ground_truth is None:
+            ground_truth = []
+
         assert isinstance(ground_truth, list)
+
+        ground_truth_names = set()
 
         for action in ground_truth:
             assert isinstance(action, dict)
             assert isinstance(action.get("name"), str)
             assert isinstance(action.get("arguments"), str)
 
-            # NeMo's verifier later calls json.loads() on this field.
-            parsed_arguments = json.loads(action["arguments"])
-            assert isinstance(parsed_arguments, dict)
+            arguments = json.loads(action["arguments"])
+            assert isinstance(arguments, dict)
 
-        print("debug the workplace_assistant_data")
-        print("\tSystem prompt: ", system_prompt)
-        print("\tUser prompt: ", user_prompt)
-        print("\n\tTools (before):", data['response_create_params']['tools'])
-        print("\n\tTools (After):", transformed_tools)
+            ground_truth_names.add(action["name"])
+
+        # Every reference action must use a tool exposed to the model.
+        unavailable_tools = ground_truth_names - set(tool_names)
+        assert not unavailable_tools, (
+            f"Ground-truth tools not exposed for sample {idx}: "
+            f"{sorted(unavailable_tools)}"
+        )
 
         return {
             'agent_name': 'tool_agent',
@@ -234,8 +215,8 @@ class FormatData:
                 system_prompt, 
                 user_prompt
             ],
-            'tools': transformed_tools,
-            'ability': data['agent_ref']['name'].strip(),
+            'tool_selection': tool_names,
+            'ability': 'workplace_assistant',
             'reward_model': {
                 'style': 'rule',
                 'ground_truth': data['ground_truth'], 
@@ -266,16 +247,20 @@ class FormatData:
                                   pattern.
             - options : choice of answers to the questions
         """
+        assert len(data['responses_create_params']['input']) == 1
+
         return {
+            'agent_name': 'single_turn_agent',
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
                 {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_MCQA},
                 data['responses_create_params']['input'][0],
             ],
-            'ability': data['agent_ref']['name'].strip(),
+            'tool_selection': None,
+            'ability': 'mcqa',
             'reward_model': {
                 'style': 'rule',
-                'ground_truth': data['expected_answer'],
+                'ground_truth': data['expected_answer'].strip(),
             },
             'extra_info': {
                 'split': 'train',
@@ -301,17 +286,30 @@ class FormatData:
                            should look like in json format (json schema)
         """
         if data['schema_type']: assert data['schema_type'].strip() == 'json'
+        messages = data["responses_create_params"]["input"]
+
+        assert len(messages) in {1, 2}
+        assert all(message["role"] == "user" for message in messages)
+        assert all(message.get("content", "").strip() for message in messages)
+
+        schema_str = data["schema_str"]
+        assert isinstance(schema_str, str) and schema_str.strip()
 
         return {
+            'agent_name': 'single_turn_agent',
             'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
             'prompt': [
-                {'role': 'system', 'content': FormatData.SYSTEM_PROMPT_STRUCTURED_OUTPUTS},
-                data['responses_create_params']['input'][0],
+                {
+                    "role": "system",
+                    "content": FormatData.SYSTEM_PROMPT_STRUCTURED_OUTPUTS,
+                },
+                *messages,
             ],
-            'ability': data['agent_ref']['name'].strip(),
+            'tool_selection': None,
+            'ability': 'structured_outputs',
             'reward_model': {
                 'style': 'rule',
-                'ground_truth': data['schema_str'],
+                'ground_truth': schema_str,
             },
             'extra_info': {
                 'split': 'train',
@@ -320,7 +318,6 @@ class FormatData:
                 'max_completion_length': 4000,
             },
         }
-
 
     @staticmethod
     def format_data_multi_domain(data, idx):
@@ -334,7 +331,7 @@ class FormatData:
             
             case "structured_outputs_simple_agent":
                 return FormatData.structured_outputs_data(data, idx)
-
+            
 
     @staticmethod
     def format_dataset_RL_Cascade2(config="IF-RL") -> Dataset:
@@ -393,11 +390,11 @@ class FormatData:
         print("\tSize of the train split : ", len(train_set))
         print("\tSize of the test split : ", len(test_set))
 
-        # train_set.to_parquet(os.path.join(local_dir, config+'-fraction-train.parquet'))
-        # test_set.to_parquet(os.path.join(local_dir, config+'-fraction-test.parquet'))
+        train_set.to_parquet(os.path.join(local_dir, config+'-train.parquet'))
+        test_set.to_parquet(os.path.join(local_dir, config+'-test.parquet'))
         return train_set, test_set
 
+
+
 if __name__ == "__main__":
-    # Uncomment one of the following:
     FormatData.format_dataset_RL_Cascade2(config="multi-domain-RL")
-    # test_IF_RL_config()
