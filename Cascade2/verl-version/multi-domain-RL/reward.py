@@ -211,47 +211,46 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     """
     
     # Pull options/expected_answer from dataset-style metadata if available
-    print("\t completion: ", solution_str)
-    options, expected_answer = extra_info["options"], ground_truth
-    print("\toptions:", options)
-    print("\texpected_answer:", expected_answer)
-    gold = (expected_answer or "").strip().upper()
+    options = extra_info["options"]
+    gold = (ground_truth or "").strip().upper()
+    text = solution_str.strip()
     # Derive allowed letters from option keys
     allowed_letters = _get_allowed_letters_from_options(options)
-    print("\tallowed_letters:", allowed_letters)
-
     grading_mode = extra_info["reward_mode"]
-
+    template_metadata = extra_info["template_metadata"]
     pred: Optional[str] = None
 
-    if not solution_str or not solution_str.strip():
+    print("\t completion: ", text)
+    print("\toptions:", options)
+    print("\texpected_answer:", ground_truth)
+    print("\tallowed_letters:", allowed_letters)
+
+    if not text:
         return 0.0  # Empty response gets zero reward
 
     # Check for template_metadata first (highest priority)
-    template_metadata = extra_info["template_metadata"]
     if template_metadata and "output_regex" in template_metadata:
         regex_patterns = template_metadata["output_regex"]
-        pred = _parse_answer_with_custom_regexes(solution_str, regex_patterns, allowed_letters, options)
+        pred = _parse_answer_with_custom_regexes(text, regex_patterns, allowed_letters, options)
         print("\tparsed answer from template_metadata regex:", pred)
 
     # Fallback to existing grading_mode logic if template_metadata didn't work
     if pred is None:
         if grading_mode == "strict_single_letter_boxed":
-            assert False
-            pred, _, _ = _parse_answer_letter_strict_boxed(solution_str, allowed_letters)
+            pred, _, _ = _parse_answer_letter_strict_boxed(text, allowed_letters)
             print("\tparsed answer from strict_single_letter_boxed:", pred)
         elif grading_mode == "lenient_boxed":
             # Try strict boxed first
-            pred, _, _ = _parse_answer_letter_strict_boxed(solution_str, allowed_letters)
+            pred, _, _ = _parse_answer_letter_strict_boxed(text, allowed_letters)
             if pred is None:
                 # Then try to match option text inside boxed content only
-                letter_from_text = _match_option_text(solution_str, options, allowed_letters)
+                letter_from_text = _match_option_text(text, options, allowed_letters)
                 if letter_from_text is not None:
                     pred = letter_from_text
         elif grading_mode == "lenient_answer_colon":
             # Look for Answer: <...>
             ANSWER_COLON_PATTERN = re.compile(r"(?i)answer\s*:\s*(.+)")
-            m = ANSWER_COLON_PATTERN.search(solution_str)
+            m = ANSWER_COLON_PATTERN.search(text)
             if m:
                 candidate = _strip_latex_wrappers(m.group(1)).strip()
                 # Letter case
@@ -274,7 +273,7 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
             # Markdown-aware Answer: extraction handles **Answer: B**, etc.
             # Markdown-aware variant: tolerates **Answer: B**, __Answer__: B, etc. Captures single letter only.
             ANSWER_COLON_MD_PATTERN = re.compile(r"(?i)[*_]{0,2}Answer[*_]{0,2}\s*:[*_\s]{0,2}\s*([A-Z])(?![a-zA-Z0-9])")
-            md_match = ANSWER_COLON_MD_PATTERN.search(solution_str)
+            md_match = ANSWER_COLON_MD_PATTERN.search(text)
             if md_match:
                 letter_up = md_match.group(1).strip().upper()
                 if letter_up in allowed_letters:
@@ -282,13 +281,52 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
 
     is_correct = (pred == gold) if (pred is not None and gold) else False
     reward = 1.0 if is_correct else 0.0
-    print("\n\n\tpred:", pred, "gold:", gold, "reward:", reward)
-    assert False
-    assert type(reward) is float
     return reward
 
 
 # STRUCTURED OUTPUTS -------------------------------------------------------------------
+
+def try_parse_tool_calls(content: str):
+    """Try parse the tool calls.
+    sources : 
+    https://colab.research.google.com/github/oliveirabruno01/unsloth-challenge/blob/main/Qwen2_5_1_5B_Tool_Calling.ipynb#scrollTo=AsF3E3RTes8w
+    https://github.com/verl-project/verl/blob/983cb0f24443f87b3d161fad318445130a620b07/verl/experimental/agent_loop/tool_parser.py#L116
+    """
+
+    tool_call_regex = re.compile(r"<tool_call>(.*?)</tool_call>", re.DOTALL)
+    matches = tool_call_regex.findall(content)
+    tool_calls = []
+    for match in matches: 
+        try:
+            func = json.loads(match.strip())
+
+            if not isinstance(func, dict):
+                raise TypeError("Tool call must be a JSON object")
+
+            name = func["name"]
+            arguments = func["arguments"]
+
+            if not isinstance(name, str):
+                raise TypeError("Tool name must be a string")
+
+            # Sometimes arguments are emitted as a JSON-encoded string
+            if isinstance(arguments, str):
+                arguments = json.loads(arguments)
+
+            if not isinstance(arguments, dict):
+                raise TypeError("Tool arguments must be a JSON object")
+
+            tool_calls.append({
+                "name": name,
+                "arguments": arguments,
+            })
+
+        except Exception as e:
+            print(f"Failed to parse tool calls: the content is {match!r} and {e}")
+            pass 
+
+    return tool_calls
+
 
 def strictify_schema(schema: Dict[str, Any]):
     """Make a schema strict as per OpenAPI guidelines"""
@@ -306,6 +344,13 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
     extra_info : dataset metadata
     the reward manager detokenizes the response before calling the scoring function.
     in this nemotron dataset there are only json schema types
+    Prompt + schema
+        ↓
+    one model generation
+        ↓
+    validate against schema_str
+        ↓
+    binary reward
     """
     # strict schemas and schemaless? 
 
@@ -319,7 +364,7 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
     try:
         schema = json.loads(ground_truth)
     except Exception as e:
-        print("Error parsing schema: ", str(e)[:200])
+        print("Error parsing gt schema: ", str(e)[:200])
         return 0.0 
 
     strictify_schema(schema)
@@ -421,47 +466,6 @@ class WorkplaceTool(BaseTool):
         # do we need to update agent_data._workplace_env?
         return ToolResponse(text=observation), 0.0, {} # model observation, step-level tool rewards, tool metrics
 
-
-def try_parse_tool_calls(content: str):
-    """Try parse the tool calls.
-    sources : 
-    https://colab.research.google.com/github/oliveirabruno01/unsloth-challenge/blob/main/Qwen2_5_1_5B_Tool_Calling.ipynb#scrollTo=AsF3E3RTes8w
-    https://github.com/verl-project/verl/blob/983cb0f24443f87b3d161fad318445130a620b07/verl/experimental/agent_loop/tool_parser.py#L116
-    """
-
-    tool_call_regex = re.compile(r"<tool_call>(.*?)</tool_call>", re.DOTALL)
-    matches = tool_call_regex.findall(content)
-    tool_calls = []
-    for match in matches: 
-        try:
-            func = json.loads(match.strip())
-
-            if not isinstance(func, dict):
-                raise TypeError("Tool call must be a JSON object")
-
-            name = func["name"]
-            arguments = func["arguments"]
-
-            if not isinstance(name, str):
-                raise TypeError("Tool name must be a string")
-
-            # Sometimes arguments are emitted as a JSON-encoded string
-            if isinstance(arguments, str):
-                arguments = json.loads(arguments)
-
-            if not isinstance(arguments, dict):
-                raise TypeError("Tool arguments must be a JSON object")
-
-            tool_calls.append({
-                "name": name,
-                "arguments": arguments,
-            })
-
-        except Exception as e:
-            print(f"Failed to parse tool calls: the content is {match!r} and {e}")
-            pass 
-
-    return tool_calls
 
 def execute_actions_and_reset_state(actions: List[Dict[str, str]]):
     toolkits = [

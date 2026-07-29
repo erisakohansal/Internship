@@ -21,4 +21,4 @@ tools = [
     },
 ]
 
-print(json.dumps(transform_tool_format(tools)[0]))
+print(json.loads(transform_tool_format(tools)[0]))

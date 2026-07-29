@@ -1,0 +1,84 @@
+{"time":"2026-07-29T16:31:30.662794887+02:00","level":"INFO","msg":"wandb-core"}
+{"time":"2026-07-29T16:31:30.674046938+02:00","level":"INFO","msg":"stream: starting","core version":"0.28.0"}
+{"time":"2026-07-29T16:31:30.986862012+02:00","level":"INFO","msg":"stream: created new stream","id":"dxqyxpo4"}
+{"time":"2026-07-29T16:31:30.988079775+02:00","level":"INFO","msg":"handler: started"}
+{"time":"2026-07-29T16:31:30.988553146+02:00","level":"INFO","msg":"stream: started"}
+{"time":"2026-07-29T16:31:30.988827957+02:00","level":"INFO","msg":"writer: started","stream_id":"dxqyxpo4"}
+{"time":"2026-07-29T16:31:30.988855787+02:00","level":"INFO","msg":"sender: started"}
+{"time":"2026-07-29T16:31:32.498296551+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":2}
+{"time":"2026-07-29T16:31:33.146012719+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:31:47.49773438+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":0,"events_lines":2,"console_offset":1,"console_lines":2,"uploaded_len":2}
+{"time":"2026-07-29T16:31:48.64071829+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:32:02.509781955+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":2,"events_lines":2}
+{"time":"2026-07-29T16:32:04.417550441+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:32:17.508958055+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":4,"events_lines":2}
+{"time":"2026-07-29T16:32:18.268642226+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:32:32.498246967+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":6,"events_lines":2}
+{"time":"2026-07-29T16:32:35.137526155+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:32:38.164645185+02:00","level":"ERROR","msg":"error adding file to cache","err":"open /home/users/u104403/.cache/wandb/artifacts/tmp/1590429621: disk quota exceeded"}
+{"time":"2026-07-29T16:32:47.49857978+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":8,"events_lines":2,"console_offset":3,"console_lines":9,"uploaded_len":1}
+{"time":"2026-07-29T16:32:50.094984028+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:33:02.501579431+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":10,"events_lines":2}
+{"time":"2026-07-29T16:33:03.127938949+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:33:17.498527512+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":12,"events_lines":2}
+{"time":"2026-07-29T16:33:19.326743181+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:33:32.506694537+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":0,"history_lines":1,"events_offset":14,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:33:34.409246983+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:33:47.510299269+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":16,"events_lines":2}
+{"time":"2026-07-29T16:33:48.522717823+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:34:02.511159823+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":18,"events_lines":2}
+{"time":"2026-07-29T16:34:03.247201104+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:34:17.506154801+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":1,"history_lines":1,"events_offset":20,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:34:18.515795827+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:34:32.510321544+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":22,"events_lines":2}
+{"time":"2026-07-29T16:34:33.236029376+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:34:47.512189221+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":24,"events_lines":2}
+{"time":"2026-07-29T16:34:48.034585814+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:35:02.511656002+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":26,"events_lines":2}
+{"time":"2026-07-29T16:35:03.212160193+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:35:17.503784342+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":2,"history_lines":1,"events_offset":28,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:35:18.401132218+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:35:32.510565195+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":30,"events_lines":2}
+{"time":"2026-07-29T16:35:33.133244917+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:35:47.508598226+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":32,"events_lines":2}
+{"time":"2026-07-29T16:35:48.140806835+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:36:02.51470681+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":3,"history_lines":1,"events_offset":34,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:36:03.111539129+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:36:17.49801028+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":36,"events_lines":2}
+{"time":"2026-07-29T16:36:18.087095627+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:36:32.51340033+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":38,"events_lines":2}
+{"time":"2026-07-29T16:36:32.993576239+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:36:47.497720402+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":40,"events_lines":2}
+{"time":"2026-07-29T16:36:51.044219608+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:37:02.502263102+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":42,"events_lines":2}
+{"time":"2026-07-29T16:37:03.415579497+02:00","level":"ERROR","msg":"error adding file to cache","err":"open /home/users/u104403/.cache/wandb/artifacts/tmp/2796466316: disk quota exceeded"}
+{"time":"2026-07-29T16:37:04.813740433+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:37:17.512520998+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":4,"history_lines":1,"events_offset":44,"events_lines":2,"console_offset":10,"console_lines":1,"uploaded_len":1}
+{"time":"2026-07-29T16:37:18.660309646+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:37:32.509674449+02:00","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":46,"events_lines":2,"console_offset":12,"console_lines":1}
+{"time":"2026-07-29T16:37:33.262800619+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:37:47.498823966+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":5,"history_lines":1,"events_offset":48,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:37:48.26021354+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:38:02.511627451+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":50,"events_lines":2}
+{"time":"2026-07-29T16:38:03.198302032+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:38:17.511735119+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":52,"events_lines":2}
+{"time":"2026-07-29T16:38:18.019945134+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:38:32.516871122+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":6,"history_lines":1,"events_offset":54,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:38:33.121718181+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:38:47.510783713+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":56,"events_lines":2}
+{"time":"2026-07-29T16:38:48.111171999+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:39:02.506073838+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":7,"history_lines":1,"events_offset":58,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:39:03.319699771+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:39:17.509657627+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":60,"events_lines":2}
+{"time":"2026-07-29T16:39:18.203408229+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:39:32.511057599+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":62,"events_lines":2}
+{"time":"2026-07-29T16:39:33.110316422+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:39:47.510330154+02:00","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":8,"history_lines":1,"events_offset":64,"events_lines":2,"console_offset":10,"console_lines":1}
+{"time":"2026-07-29T16:39:48.474139346+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:40:02.512950185+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":66,"events_lines":2}
+{"time":"2026-07-29T16:40:03.366148291+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:40:17.508565277+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":68,"events_lines":2}
+{"time":"2026-07-29T16:40:18.684171613+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:40:32.511050778+02:00","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":70,"events_lines":2}
+{"time":"2026-07-29T16:40:33.338696961+02:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-07-29T16:40:43.397037536+02:00","level":"ERROR","msg":"error adding file to cache","err":"open /home/users/u104403/.cache/wandb/artifacts/tmp/78150089: disk quota exceeded"}

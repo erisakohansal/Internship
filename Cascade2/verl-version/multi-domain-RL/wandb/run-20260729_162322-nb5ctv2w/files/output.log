@@ -1,0 +1,13 @@
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+('Initial validation metrics: '
+ "{'val-aux/nvidia/Nemotron-Cascade-2-RL-data/reward/mean@1': "
+ 'np.float64(0.34265734265734266), '
+ "'val-core/nvidia/Nemotron-Cascade-2-RL-data/acc/mean@1': "
+ "np.float64(0.34265734265734266), 'val-aux/num_turns/min': np.int64(2), "
+ "'val-aux/num_turns/max': np.int64(2), 'val-aux/num_turns/mean': "
+ 'np.float64(2.0)}')
+Training Progress:  80%|████████  | 8/10 [18:49<04:39, 139.60s/it]
+Dumped generations to /project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints/Validation/0.jsonl
+Dumped generations to /project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints/Validation/5.jsonl

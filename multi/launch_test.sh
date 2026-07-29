@@ -6,13 +6,12 @@
 #SBATCH -p gpu
 #SBATCH -A p201382
 #SBATCH -q default
-#SBATCH --time 3:00:00
+#SBATCH --time 5:00:00
 #SBATCH --job-name=calculator
 #SBATCH --output=slurm/logs/calculator_%j.out
 #SBATCH --error=slurm/logs/calculator_%j.err
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=erisa.kohansal@linguacustodia.com
-
 
 set -xeuo pipefail
 
@@ -23,7 +22,7 @@ module load CMake/3.29.3-GCCcore-13.3.0
 module load Ninja/1.12.1-GCCcore-13.3.0
 
 source /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin/activate
-PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi"
+PWD="/project/scratch/p201382/erisa/Internship/multi"
 cd $PWD
 
 export PYTHONPATH=""
@@ -34,12 +33,14 @@ REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
 CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-turn/checkpoints"
-TRAIN_FILE="$PWD/gsm8k-train.parquet" 
-TEST_FILE="$PWD/gsm8k-test.parquet" 
+TRAIN_FILE="$PWD/gsm8k/train.parquet" 
+TEST_FILE="$PWD/gsm8k/test.parquet" 
 MAX_PROMPT_LEN=5000
 MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
 MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct} 
+
+# example : https://github.com/verl-project/verl/blob/v0.5.0/examples/sglang_multiturn/run_qwen2.5-3b_gsm8k_multiturn.sh
 
 python3 -m verl.trainer.main_ppo \
   data.train_files="$TRAIN_FILE" \
@@ -59,7 +60,7 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.actor.clip_ratio_high=0.28 \
   actor_rollout_ref.actor.loss_agg_mode=token-mean \
   actor_rollout_ref.actor.ppo_mini_batch_size=128 \
-  actor_rollout_ref.actor.dynamic_batchsz=True \
+  actor_rollout_ref.actor.use_dynamic_bsz=True \
   actor_rollout_ref.actor.ppo_epochs=1 \
   actor_rollout_ref.actor.entropy_coeff=0.0 \
   actor_rollout_ref.actor.optim.lr=3e-6 \
@@ -73,8 +74,7 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.do_sample=True \
   actor_rollout_ref.rollout.val_kwargs.temperature=0.0 \
   actor_rollout_ref.rollout.val_kwargs.do_sample=False \
-  actor_rollout_ref.rollout.n=1 \
-  actor_rollout_ref.rollout.dynamic_bsz=True \
+  actor_rollout_ref.rollout.n=8 \
   actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
   actor_rollout_ref.rollout.gpu_memory_utilization=0.7 \
   actor_rollout_ref.rollout.max_model_len=${MAX_MODEL_LEN} \
@@ -101,8 +101,9 @@ python3 -m verl.trainer.main_ppo \
   +algorithm.filter_groups.max_num_gen_batches=10 \
   reward.custom_reward_function.path="$REWARD_PATH" \
   reward.custom_reward_function.name=calculator_reward_fn \
-  reward.reward_manager=dapo \
-  trainer.total_training_steps=20 \
+  reward.reward_manager.source=register \
+  reward.reward_manager.name=dapo \
+  trainer.total_training_steps=50 \
   trainer.save_freq=5 \
   trainer.val_before_train=True \
   trainer.test_freq=5 \

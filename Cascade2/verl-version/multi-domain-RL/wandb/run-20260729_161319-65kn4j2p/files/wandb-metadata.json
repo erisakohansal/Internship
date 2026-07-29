@@ -1,0 +1,128 @@
+{
+  "os": "Linux-4.18.0-553.126.1.el8_10.x86_64-x86_64-with-glibc2.28",
+  "python": "CPython 3.12.3",
+  "startedAt": "2026-07-29T14:13:19.693081Z",
+  "args": [
+    "--node-ip-address=10.3.40.32",
+    "--node-manager-port=33813",
+    "--object-store-name=/tmp/ray/session_2026-07-29_16-07-29_763282_14892/sockets/plasma_store",
+    "--raylet-name=/tmp/ray/session_2026-07-29_16-07-29_763282_14892/sockets/raylet",
+    "--redis-address=None",
+    "--metrics-agent-port=0",
+    "--logging-rotate-bytes=536870912",
+    "--logging-rotate-backup-count=5",
+    "--runtime-env-agent-port=0",
+    "--gcs-address=10.3.40.32:40035",
+    "--session-name=session_2026-07-29_16-07-29_763282_14892",
+    "--temp-dir=/tmp/ray",
+    "--webui=127.0.0.1:8265",
+    "--cluster-id=858f37394e9b983b067b3508714ee82d0d94e3e9377ce212d6dd6b81",
+    "--worker-id=b8b950204b265adc326e17da25200d43c3c8e0ee9d290212bd839d41",
+    "--worker-launch-time-ms=1785334063790",
+    "--node-id=5ce41ebb983f76bce304219667e7d07fafef5eaa09089d43d3e89fd0",
+    "--runtime-env-hash=-1881823015"
+  ],
+  "program": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/ray/_private/workers/default_worker.py",
+  "codePath": "Cascade2/verl-version/.venv/lib/python3.12/site-packages/ray/_private/workers/default_worker.py",
+  "git": {
+    "remote": "https://github.com/erisakohansal/Internship.git",
+    "commit": "6f741a62085c0ba479bef2878479a32cd64f6e03"
+  },
+  "email": "erisa.kohansal@etu.sorbonne-universite.fr",
+  "root": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL",
+  "host": "mel2032",
+  "executable": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin/python3",
+  "cpu_count": 64,
+  "cpu_count_logical": 128,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "gpu_count": 4,
+  "disk": {
+    "/": {
+      "total": "270145253376",
+      "used": "9560981504"
+    }
+  },
+  "memory": {
+    "total": "540290510848"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-7d3dc763-1ba6-f1d4-8061-7b57ddc2ba6b"
+    },
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-74c0dcb4-551b-b334-4f95-3ad7e8a153f4"
+    },
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-043179a1-6fb9-23e2-2058-74f8be39fbea"
+    },
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-306199de-f918-0d55-4887-8fda7f4b7ed1"
+    }
+  ],
+  "cudaVersion": "13.2",
+  "slurm": {
+    "cluster_name": "meluxina",
+    "conf": "/var/run/slurm/conf/slurm.conf",
+    "cpus_on_node": "128",
+    "cpus_per_task": "64",
+    "gpus_on_node": "4",
+    "gpus_per_node": "4",
+    "gtids": "0",
+    "job_account": "p201382",
+    "job_cpus_per_node": "128",
+    "job_end_time": "1785344805",
+    "job_gid": "555",
+    "job_gpus": "0,1,2,3",
+    "job_id": "4927913",
+    "job_name": "workplace_assistant",
+    "job_nodelist": "mel2032",
+    "job_num_nodes": "1",
+    "job_partition": "gpu",
+    "job_qos": "default",
+    "job_restart_count": "0",
+    "job_start_time": "1785333995",
+    "job_stderr": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/slurm/logs/workplace_assistant_%j.err",
+    "job_stdin": "/dev/null",
+    "job_stdout": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/slurm/logs/workplace_assistant_%j.out",
+    "job_uid": "104403",
+    "job_user": "u104403",
+    "jobid": "4927913",
+    "localid": "0",
+    "mem_per_cpu": "3840",
+    "nnodes": "1",
+    "nodeid": "0",
+    "nodelist": "mel2032",
+    "nprocs": "1",
+    "ntasks": "1",
+    "ntasks_per_node": "1",
+    "prio_process": "0",
+    "procid": "0",
+    "spank_set_non_perf_paranoid": "0",
+    "spank_slurm_spank_set_non_perf_paranoid": "0",
+    "spank_start_cuda_mps": "0",
+    "submit_dir": "/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL",
+    "submit_host": "login02.meluxina.lxp.lu",
+    "task_pid": "6527",
+    "tasks_per_node": "1",
+    "topology_addr": "meta.switch73.switch16.mel2032",
+    "topology_addr_pattern": "switch.switch.switch.node",
+    "tres_per_task": "cpu=64"
+  },
+  "writerId": "wkeluirach7u1aet9slg6d21bijg5qu5"
+}
