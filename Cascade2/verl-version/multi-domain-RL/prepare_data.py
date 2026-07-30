@@ -96,27 +96,30 @@ def workplace_assistant_data(data, idx):
         f"{sorted(unavailable_tools)}"
     )
 
+    gt = json.dumps(data["ground_truth"])
+    assert isinstance(gt, str)
+
     return {
-        'agent_name': 'tool_agent',
-        'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
-        'prompt': [
+        "agent_name": "tool_agent",
+        "data_source": "nvidia/Nemotron-Cascade-2-RL-data",
+        "prompt": [
             system_prompt, 
             user_prompt
         ],
-        'tool_selection': tool_names,
-        'ability': 'workplace_assistant',
-        'reward_model': {
-            'style': 'rule',
-            'ground_truth': json.dumps(data['ground_truth']), 
+        "tool_selection": tool_names,
+        "ability": "workplace_assistant",
+        "reward_model": {
+            "style": "rule",
+            "ground_truth": gt, 
         },
-        'extra_info': {
-            'split': 'train',
-            'index': idx,
-            'agent_ref': data['agent_ref']['name'].strip(),
+        "extra_info": {
+            "split": "train",
+            "index": idx,
+            "agent_ref": data["agent_ref"]["name"].strip(),
 
-            'reward_mode': None,
-            'template_metadata': None,
-            'options': None,
+            "reward_mode": None,
+            "template_metadata": None,
+            "options": None,
         },
     }
 
@@ -136,29 +139,32 @@ def mcqa_data(data, idx):
                                 pattern.
         - options : choice of answers to the questions
     """
-    assert len(data['responses_create_params']['input']) == 1
+    assert len(data["responses_create_params"]["input"]) == 1
+
+    options = json.dumps(data["options"])
+    assert isinstance(options, str)
 
     return {
-        'agent_name': 'single_turn_agent',
-        'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
-        'prompt': [
-            {'role': 'system', 'content': SYSTEM_PROMPT_MCQA},
-            data['responses_create_params']['input'][0],
+        "agent_name": "single_turn_agent",
+        "data_source": "nvidia/Nemotron-Cascade-2-RL-data",
+        "prompt": [
+            {"role": "system", "content": SYSTEM_PROMPT_MCQA},
+            data["responses_create_params"]["input"][0],
         ],
-        'tool_selection': None,
-        'ability': 'mcqa',
-        'reward_model': {
-            'style': 'rule',
-            'ground_truth': data['expected_answer'].strip(),
+        "tool_selection": [],
+        "ability": "mcqa",
+        "reward_model": {
+            "style": "rule",
+            "ground_truth": data["expected_answer"].strip(),
         },
-        'extra_info': {
-            'split': 'train',
-            'index': idx,
-            'agent_ref': data['agent_ref']['name'].strip(),
+        "extra_info": {
+            "split": "train",
+            "index": idx,
+            "agent_ref": data["agent_ref"]["name"].strip(),
             
-            'reward_mode': 'strict_single_letter_boxed', # 4 options available, backup regex pattern
-            'template_metadata': data['template_metadata'],
-            'options': data['options'],
+            "reward_mode": "strict_single_letter_boxed", # 4 options available, backup regex pattern
+            "template_metadata": data["template_metadata"],
+            "options": options,
         },
     }
 
@@ -171,7 +177,7 @@ def structured_outputs_data(data, idx):
         - schema_str : contains the outline of what the output 
                         should look like in json format (json schema)
     """
-    if data['schema_type']: assert data['schema_type'].strip() == 'json'
+    if data["schema_type"]: assert data["schema_type"].strip() == "json"
     messages = data["responses_create_params"]["input"]
 
     assert len(messages) in {1, 2}
@@ -182,36 +188,36 @@ def structured_outputs_data(data, idx):
     assert isinstance(schema_str, str) and schema_str.strip()
 
     return {
-        'agent_name': 'single_turn_agent',
-        'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
-        'prompt': [
+        "agent_name": "single_turn_agent",
+        "data_source": "nvidia/Nemotron-Cascade-2-RL-data",
+        "prompt": [
             {
                 "role": "system",
                 "content": SYSTEM_PROMPT_STRUCTURED_OUTPUTS,
             },
             *messages,
         ],
-        'tool_selection': None,
-        'ability': 'structured_outputs',
-        'reward_model': {
-            'style': 'rule',
-            'ground_truth': schema_str,
+        "tool_selection": [],
+        "ability": "structured_outputs",
+        "reward_model": {
+            "style": "rule",
+            "ground_truth": schema_str,
         },
-        'extra_info': {
-            'split': 'train',
-            'index': idx,
-            'agent_ref': data['agent_ref']['name'].strip(),
+        "extra_info": {
+            "split": "train",
+            "index": idx,
+            "agent_ref": data["agent_ref"]["name"].strip(),
 
-            'reward_mode': None,
-            'template_metadata': None,
-            'options': None,
+            "reward_mode": None,
+            "template_metadata": None,
+            "options": None,
         },
     }
 
 
 def format_data_multi_domain(data, idx):
 
-    match data['agent_ref']['name']:
+    match data["agent_ref"]["name"]:
         case "workplace_assistant_simple_agent":
             return workplace_assistant_data(data, idx)
 
@@ -222,7 +228,8 @@ def format_data_multi_domain(data, idx):
             return structured_outputs_data(data, idx)
         
 
-def format_dataset_multi_domain(config="multi-domain-RL") -> Dataset:
+def format_dataset_multi_domain() -> Dataset:
+    config = "multi-domain-RL"
     data = load_dataset(
         "nvidia/Nemotron-Cascade-2-RL-data",
         config,
@@ -241,6 +248,12 @@ def format_dataset_multi_domain(config="multi-domain-RL") -> Dataset:
         with_indices=True,
     )
 
+    print(dataset.features)
+    for ability in ["mcqa", "structured_outputs", "workplace_assistant"]:
+        row = next(row for row in dataset if row["ability"] == ability)
+        ground_truth = row["reward_model"]["ground_truth"]
+        print(ability, type(ground_truth), repr(ground_truth)[:200])
+
     print(dataset[0])
     print(dataset[0]["prompt"])
     print(dataset[0]["extra_info"])
@@ -252,31 +265,32 @@ def format_dataset_multi_domain(config="multi-domain-RL") -> Dataset:
         shuffle=True,
     )
 
-    train_set = splits['train']
-    test_set = splits['test']
+    train_set = splits["train"]
+    test_set = splits["test"]
     local_dir = os.getcwd()
 
     print("\tSize of the train split : ", len(train_set))
     print("\tSize of the test split : ", len(test_set))
 
-    train_set.to_parquet(os.path.join(local_dir, config+'-train.parquet'))
-    test_set.to_parquet(os.path.join(local_dir, config+'-test.parquet'))
+    train_set.to_parquet(os.path.join(local_dir, config+"-train.parquet"))
+    test_set.to_parquet(os.path.join(local_dir, config+"-test.parquet"))
     return train_set, test_set
 
 
 
 if __name__ == "__main__":
-    # FormatData.format_dataset_RL_Cascade2(config="multi-domain-RL")
-    PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL"
-    TRAIN_FILE=f"{PWD}/multi-domain-RL-train.parquet"
-    import pandas as pd
-    df = pd.read_parquet(TRAIN_FILE)
-    structured_df = df[
-    df["extra_info"].apply(
-            lambda extra_info: extra_info.get("agent_ref") == "structured_outputs"
-        )
-    ]
+    format_dataset_multi_domain()
 
-    row = structured_df.iloc[0]
-    print(type(row["reward_model"]["ground_truth"]))
-    print(row["reward_model"]["ground_truth"])
+    # PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL"
+    # TRAIN_FILE=f"{PWD}/multi-domain-RL-train.parquet"
+    # import pandas as pd
+    # df = pd.read_parquet(TRAIN_FILE)
+    # structured_df = df[
+    # df["extra_info"].apply(
+    #         lambda extra_info: extra_info.get("agent_ref") == "structured_outputs"
+    #     )
+    # ]
+
+    # row = structured_df.iloc[0]
+    # print(type(row["reward_model"]["ground_truth"]))
+    # print(row["reward_model"]["ground_truth"])

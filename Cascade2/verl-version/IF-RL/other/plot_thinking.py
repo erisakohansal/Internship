@@ -243,6 +243,7 @@ def load_single_evaluation(
 def plot_run(
     evaluations: dict[int, tuple[float, Path]],
     label: str,
+    color: str,
 ) -> None:
     steps = sorted(evaluations)
     scores = [evaluations[step][0] for step in steps]
@@ -253,6 +254,7 @@ def plot_run(
         marker="o",
         linewidth=2,
         label=label,
+        color=color,
     )
 
     for step, score in zip(steps, scores):
@@ -359,9 +361,33 @@ def main() -> None:
 
     parser.add_argument(
         "--metric",
-        default="prompt_level_strict_acc",
+        default="inst_level_loose_acc",
         choices=list(METRIC_ALIASES),
     )
+
+    # METRIC_ALIASES = {
+    #     "prompt_level_strict_acc": [
+    #         "prompt_level_strict_acc",
+    #         "prompt_level_strict_acc,none",
+    #     ],
+    #     "inst_level_strict_acc": [
+    #         "inst_level_strict_acc",
+    #         "inst_level_strict_acc,none",
+    #         "instruction_level_strict_acc",
+    #         "instruction_level_strict_acc,none",
+    #     ],
+    #     "prompt_level_loose_acc": [
+    #         "prompt_level_loose_acc",
+    #         "prompt_level_loose_acc,none",
+    #     ],
+    #     "inst_level_loose_acc": [
+    #         "inst_level_loose_acc",
+    #         "inst_level_loose_acc,none",
+    #         "instruction_level_loose_acc",
+    #         "instruction_level_loose_acc,none",
+    #     ],
+    # }
+
 
     parser.add_argument(
         "--output",
@@ -396,6 +422,11 @@ def main() -> None:
         preferred_subdir="ifeval",
     )
 
+    verl_fraction_eval_dir = resolve_eval_directory(
+        project_directory  / "verl-version" / "Meluxina" / "IF_RL_Fraction" / "with_ds" / "checkpoints" / "merged_checkpoints" /"eval",
+        preferred_subdir="ifeval"
+    )
+
     # print(f"Using Cascade2 eval directory: {cascade_eval_dir}")
     print(f"Using TRL eval directory: {trl_eval_dir}")
     print(f"Using VeRL bfloat16 + ds eval directory: {verl_binary_eval_dir}")
@@ -424,6 +455,11 @@ def main() -> None:
 
     verl_withds_results = load_evaluations(
         verl_withds_eval_dir,
+        args.metric,
+    )
+
+    verl_fraction_results = load_evaluations(
+        verl_fraction_eval_dir,
         args.metric,
     )
 
@@ -482,10 +518,11 @@ def main() -> None:
     plt.figure(figsize=(10, 6))
 
     # plot_run(cascade_results, args.cascade_label)
-    plot_run(trl_results, args.trl_label)
-    plot_run(verl_binary_results, args.verl_binary_label)
-    plot_run(verl_nods_results, args.verl_nods_label)
-    plot_run(verl_withds_results, args.verl_withds_label)
+    # plot_run(trl_results, args.trl_label, color="olivedrab")
+    # plot_run(verl_binary_results, args.verl_binary_label, color="orange")
+    # plot_run(verl_nods_results, args.verl_nods_label, color="yellowgreen")
+    plot_run(verl_withds_results, "Binary Reward", color="red") # args.verl_withds_label)
+    plot_run(verl_fraction_results, "Fraction Reward", color="salmon")
 
     # if_rl_binary_dict = {
     #     step: (score, Path(""))
@@ -494,7 +531,7 @@ def main() -> None:
     # plot_run(if_rl_binary_dict, args.ifrl_binary_label)
 
     all_steps = sorted(
-        set(trl_results) | set(verl_binary_results) | set(verl_nods_results)
+        set(trl_results) | set(verl_binary_results)#  | set(verl_nods_results)
     )
 
     if base_result is not None:
@@ -519,14 +556,14 @@ def main() -> None:
 
     plt.xlabel("Checkpoint step")
     plt.ylabel(args.metric.replace("_", " ").title())
-    plt.title("IFEval Checkpoint Comparison of IF-RL Binary Reward (temp=0)")
+    plt.title("IFEval Checkpoint Comparison of IF-RL Reward Modes (temp=0)") #("IFEval Checkpoint Comparison of IF-RL Binary Reward (temp=0)")
     plt.xticks(all_steps)
     plt.ylim(0, 1)
     plt.grid(alpha=0.3)
     plt.legend()
     plt.tight_layout()
 
-    plt.savefig(args.output, dpi=200)
+    plt.savefig("inst_level_loose_Binary_vs_Fraction", dpi=200) #(args.output, dpi=200)
     print(f"\nGraph saved to: {args.output}")
 
     plt.show()

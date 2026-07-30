@@ -61,7 +61,7 @@ filtered_languages = []
 def is_supported_language(example):  
     global dataset_languages, filtered_languages
           
-    for dict_kw in example['kwargs']:
+    for dict_kw in example["kwargs"]:
 
         if not isinstance(dict_kw, dict):
             continue
@@ -81,30 +81,31 @@ def is_supported_language(example):
 
 def format_data_if(data, idx):
     # https://verl.readthedocs.io/en/latest/preparation/prepare_data.html
-    assert len(data['instruction_id_list']) > 0
+    assert len(data["instruction_id_list"]) > 0
 
     return {
-        'data_source': 'nvidia/Nemotron-Cascade-2-RL-data',
-        'prompt': [
-            {'role': 'system', 'content': SYSTEM_PROMPT_IF},
-            data['responses_create_params']['input'][0],
+        "data_source": "nvidia/Nemotron-Cascade-2-RL-data",
+        "prompt": [
+            {"role": "system", "content": SYSTEM_PROMPT_IF},
+            data["responses_create_params"]["input"][0],
         ],
-        'ability': 'instruction_following',
-        'reward_model': {
-            'style': 'rule',
-            'ground_truth': None,
+        "ability": "instruction_following",
+        "reward_model": {
+            "style": "rule",
+            "ground_truth": None,
         },
-        'extra_info': {
-            'split': 'train',
-            'index': idx,
-            'reward_mode': 'fraction',
-            'instruction_id_list': data['instruction_id_list'],
-            'kwargs': data['kwargs'],
+        "extra_info": {
+            "split": "train",
+            "index": idx,
+            "reward_mode": "fraction",
+            "instruction_id_list": data["instruction_id_list"],
+            "kwargs": data["kwargs"],
         },
     }
         
 
-def format_dataset_if_rl(config="IF-RL") -> Dataset:
+def format_dataset_if_rl() -> Dataset:
+    config = "IF-RL"
     data = load_dataset(
         "nvidia/Nemotron-Cascade-2-RL-data",
         config,
@@ -141,13 +142,13 @@ def format_dataset_if_rl(config="IF-RL") -> Dataset:
         shuffle=True,
     )
 
-    train_set = splits['train']
-    test_set = splits['test']
+    train_set = splits["train"]
+    test_set = splits["test"]
     local_dir = os.getcwd()
 
     print("\tSize of the train split : ", len(train_set))
     print("\tSize of the test split : ", len(test_set))
 
-    train_set.to_parquet(os.path.join(local_dir, config+'-train.parquet'))
-    test_set.to_parquet(os.path.join(local_dir, config+'-test.parquet'))
+    train_set.to_parquet(os.path.join(local_dir, config+"-train.parquet"))
+    test_set.to_parquet(os.path.join(local_dir, config+"-test.parquet"))
     return train_set, test_set

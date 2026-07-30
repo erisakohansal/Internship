@@ -213,7 +213,10 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     assert isinstance(ground_truth, str)
 
     # Pull options/expected_answer from dataset-style metadata if available
-    options = extra_info["options"]
+    options = json.loads(extra_info["options"])
+    assert isinstance(options, list)
+    assert all(isinstance(option, dict) for option in options)
+    
     gold = (ground_truth or "").strip().upper()
     text = solution_str.strip()
     # Derive allowed letters from option keys
