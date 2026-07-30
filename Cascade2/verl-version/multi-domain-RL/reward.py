@@ -209,7 +209,9 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     - lenient_answer_colon        -> accepts Answer: A or Answer: option text
     - lenient_answer_colon_md     -> accepts markdown-ish **Answer: A**
     """
-    
+
+    assert isinstance(ground_truth, str)
+
     # Pull options/expected_answer from dataset-style metadata if available
     options = extra_info["options"]
     gold = (ground_truth or "").strip().upper()
@@ -219,11 +221,6 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     grading_mode = extra_info["reward_mode"]
     template_metadata = extra_info["template_metadata"]
     pred: Optional[str] = None
-
-    print("\t completion: ", text)
-    print("\toptions:", options)
-    print("\texpected_answer:", ground_truth)
-    print("\tallowed_letters:", allowed_letters)
 
     if not text:
         return 0.0  # Empty response gets zero reward
@@ -351,10 +348,10 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
     validate against schema_str
         ↓
     binary reward
+    only the evaluate_structured_output_response is useful in this case : https://github.com/NVIDIA-NeMo/Gym/blob/50af84a5e2a7142c7d496dd9ea76b1e9d64202bd/resources_servers/structured_outputs/app.py#L434
     """
-    # strict schemas and schemaless? 
 
-    # only the evaluate_structured_output_response is useful in this case : https://github.com/NVIDIA-NeMo/Gym/blob/50af84a5e2a7142c7d496dd9ea76b1e9d64202bd/resources_servers/structured_outputs/app.py#L434
+    assert isinstance(ground_truth, str)
 
     """Returns (reward, error_type, error_message)."""
     if not solution_str or not solution_str.strip():
@@ -368,7 +365,6 @@ def structured_reward_fn(data_source, solution_str, ground_truth, extra_info=Non
         return 0.0 
 
     strictify_schema(schema)
-    print("strictified schema: ", schema)
 
     try:
         parsed = json.loads(solution_str)
@@ -599,8 +595,17 @@ def workplace_reward_fn(data_source, solution_str, ground_truth, extra_info=None
     2. execute the predicted actions history + the ground_truth 
     3. compare the results
     """
-    predict_env = execute_actions_and_reset_state(extra_info.get("predicted_actions", []))
-    ground_truth_env = execute_actions_and_reset_state(ground_truth)
+
+    predicted_actions = extra_info.get("predicted_actions") or []
+    gt = json.loads(ground_truth)
+
+    assert isinstance(gt, list)
+    assert isinstance(predicted_actions, list)
+    assert all(isinstance(action, dict) for action in gt)
+    assert all(isinstance(action, dict) for action in predicted_actions)
+
+    predict_env = execute_actions_and_reset_state(predicted_actions)
+    ground_truth_env = execute_actions_and_reset_state(gt)
 
     def convert_strs_to_lowercase(df):
         # For some fields the case matters, so we don't convert them to lowercase

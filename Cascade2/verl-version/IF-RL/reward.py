@@ -21,6 +21,8 @@ def if_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     kwarg_list = extra_info['kwargs']
     reward_mode = extra_info['reward_mode'] 
 
+    assert reward_mode == "fraction"
+
     is_following_list = []
         
     for instruction_id, kw in zip(instr_list, kwarg_list):

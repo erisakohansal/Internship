@@ -1,0 +1,76 @@
+{
+    "input": "system\n\n    Your response must be a single JSON object that conforms exactly to the provided JSON schema.\n    Output only the JSON object, with no surrounding prose, explanation, or markdown code fences.\n    \nuser\nCreate a structured JSON response that:\n1. Implements proper data typing\n2. Handles special characters appropriately\n3. Includes all required fields\n4. Maintains proper nesting levels\n5. Provides appropriate array formatting\n6. Validates against schema constraints\n7. Uses consistent formatting and escaping\n8. Is unindented JSON format\n9. Is grounded in the provided dialog\n10. Strictly follows the provided schema: {\"studentId\": {\"type\": \"string\", \"pattern\": \"^\\\\d{8}$\"}, \"courseCode\": {\"type\": \"string\", \"pattern\": \"^[A-Z]{2,4}\\\\d{3,4}$\"}, \"assignmentName\": {\"type\": \"string\", \"minLength\": 1, \"maxLength\": 100}, \"dueDate\": {\"type\": \"string\", \"format\": \"date-time\"}, \"submissionMethod\": {\"type\": \"string\", \"enum\": [\"online\", \"email\", \"physical\", \"portal\"]}, \"isExtensionRequested\": {\"type\": \"boolean\"}, \"extensionReason\": {\"type\": \"string\", \"maxLength\": 200}, \"isLateSubmissionAllowed\": {\"type\": \"boolean\"}, \"priorityLevel\": {\"type\": \"string\", \"enum\": [\"low\", \"medium\", \"high\", \"urgent\"]}, \"contactEmail\": {\"type\": \"string\", \"format\": \"email\"}}\nuser\n# Information\nThe final research paper is due by Friday, April 12, 2024, at 11:59 PM. The midterm exam does not accept late submissions under any circumstances. Summer course registration closes on Tuesday, March 26, 2024, at 5:00 PM. The group project proposal must be submitted by Monday, March 18, 2024. Deadline extensions for assignments are only available with written approval from the course instructor, and such approval must be obtained in advance. The final exam is scheduled for Thursday, May 9, 2024, from 1:00 PM to 3:00 PM. Students wishing to graduate with the upcoming semester must submit their application by March 31, 2024. Although there is a spring break from March 11 to March 15, 2024, this period does not affect or extend any assignment deadlines—deadlines remain unchanged and must be met on schedule. Any conflicts with an exam must be reported to the instructor at least one week prior to the exam date to be considered.\n\n# Problem: Parse the document and populate the following data model.\nassistant\n",
+    "output": "{\n  \"studentId\": \"2024001234\",\n  \"courseCode\": \"CS1010\",\n  \"assignmentName\": \"Final Research Paper\",\n  \"dueDate\": \"2024-04-12T23:59:00Z\",\n  \"submissionMethod\": \"online\",\n  \"isExtensionRequested\": false,\n  \"extensionReason\": \"\",\n  \"isLateSubmissionAllowed\": false,\n  \"priorityLevel\": \"high\",\n  \"contactEmail\": \"student@university.edu\"\n}",
+    "gts": {
+        "type": "object",
+        "required": [
+            "studentId",
+            "courseCode",
+            "assignmentName",
+            "dueDate",
+            "submissionMethod",
+            "isExtensionRequested",
+            "extensionReason",
+            "isLateSubmissionAllowed",
+            "priorityLevel",
+            "contactEmail"
+        ],
+        "additionalProperties": false,
+        "properties": {
+            "studentId": {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+            },
+            "courseCode": {
+                "type": "string",
+                "pattern": "^[A-Z]{2,4}\\d{3,4}$"
+            },
+            "assignmentName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+            },
+            "dueDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "submissionMethod": {
+                "type": "string",
+                "enum": [
+                    "online",
+                    "email",
+                    "physical",
+                    "portal"
+                ]
+            },
+            "isExtensionRequested": {
+                "type": "boolean"
+            },
+            "extensionReason": {
+                "type": "string",
+                "maxLength": 200
+            },
+            "isLateSubmissionAllowed": {
+                "type": "boolean"
+            },
+            "priorityLevel": {
+                "type": "string",
+                "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "urgent"
+                ]
+            },
+            "contactEmail": {
+                "type": "string",
+                "format": "email"
+            }
+        }
+    },
+    "score": 0.0,
+    "step": 70,
+    "reward": 0.0,
+    "acc": 0.0,
+    "uid": "b227c1cb-cc47-4ac8-a11d-b61bf0f4fff4_0_0"
+}

@@ -8,6 +8,7 @@ wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
  "np.float64(0.34265734265734266), 'val-aux/num_turns/min': np.int64(2), "
  "'val-aux/num_turns/max': np.int64(2), 'val-aux/num_turns/mean': "
  'np.float64(2.0)}')
-Training Progress:  80%|████████  | 8/10 [18:49<04:39, 139.60s/it]
+Training Progress:  90%|█████████ | 9/10 [21:01<02:17, 137.49s/it]
 Dumped generations to /project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints/Validation/0.jsonl
 Dumped generations to /project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints/Validation/5.jsonl
+Dumped gener
