@@ -1,274 +1,0 @@
-+ module load env/staging/2024.1
-+ '[' -z '' ']'
-+ case "$-" in
-+ __lmod_sh_dbg=x
-+ '[' -n x ']'
-+ set +x
-Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
-
-Lmod is automatically replacing "env/release/2025.1" with "env/staging/2024.1".
-
-Shell debugging restarted
-+ unset __lmod_sh_dbg
-+ return 0
-+ module load CUDA-Python/12.6.0-gfbf-2024a-CUDA-12.6.0
-+ '[' -z '' ']'
-+ case "$-" in
-+ __lmod_sh_dbg=x
-+ '[' -n x ']'
-+ set +x
-Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
-Shell debugging restarted
-+ unset __lmod_sh_dbg
-+ return 0
-+ module load NCCL/2.22.3-GCCcore-13.3.0-CUDA-12.6.0
-+ '[' -z '' ']'
-+ case "$-" in
-+ __lmod_sh_dbg=x
-+ '[' -n x ']'
-+ set +x
-Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
-Shell debugging restarted
-+ unset __lmod_sh_dbg
-+ return 0
-+ module load CMake/3.29.3-GCCcore-13.3.0
-+ '[' -z '' ']'
-+ case "$-" in
-+ __lmod_sh_dbg=x
-+ '[' -n x ']'
-+ set +x
-Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
-Shell debugging restarted
-+ unset __lmod_sh_dbg
-+ return 0
-+ module load Ninja/1.12.1-GCCcore-13.3.0
-+ '[' -z '' ']'
-+ case "$-" in
-+ __lmod_sh_dbg=x
-+ '[' -n x ']'
-+ set +x
-Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
-Shell debugging restarted
-+ unset __lmod_sh_dbg
-+ return 0
-+ source /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin/activate
-++ deactivate nondestructive
-++ '[' -n '' ']'
-++ '[' -n '' ']'
-++ hash -r
-++ '[' -n '' ']'
-++ unset VIRTUAL_ENV
-++ unset VIRTUAL_ENV_PROMPT
-++ '[' '!' nondestructive = nondestructive ']'
-++ '[' linux-gnu = cygwin ']'
-++ '[' linux-gnu = msys ']'
-++ export VIRTUAL_ENV=/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv
-++ VIRTUAL_ENV=/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv
-++ _OLD_VIRTUAL_PATH=/apps/USE/easybuild/staging/2024.1/software/Ninja/1.12.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/CMake/3.29.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/libarchive/3.7.4-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/cURL/8.7.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/UCX/1.16.0-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/numactl/2.0.18-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Cython/3.0.10-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/SciPy-bundle/2024.05-gfbf-2024a/bin:/apps/USE/easybuild/staging/2024.1/software/pybind11/2.12.0-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/ICU/75.1-GCCcore-13.3.0/sbin:/apps/USE/easybuild/staging/2024.1/software/ICU/75.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/zstd/1.5.6-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/lz4/1.9.4-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/gzip/1.13-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Python-bundle-PyPI/2024.06-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/virtualenv/20.26.2-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Python/3.12.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/OpenSSL/3/bin:/apps/USE/easybuild/staging/2024.1/software/XZ/5.4.5-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/SQLite/3.45.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Tcl/8.6.14-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/ncurses/6.5-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/bzip2/1.0.8-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/CUDA/12.6.0/nvvm/bin:/apps/USE/easybuild/staging/2024.1/software/CUDA/12.6.0/bin:/apps/USE/easybuild/staging/2024.1/software/FFTW/3.3.10-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/FlexiBLAS/3.4.4-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/binutils/2.42-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/GCCcore/13.3.0/bin:/apps/USE/easybuild/system/software/myquota/0.3.4/bin:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/cli/servers/Stable-fc3def6774c76082adf699d366f31a557ce5573f/server/bin/remote-cli:/mnt/tier1/project/p201382/erisa/cargo/bin:/home/users/u104403/.local/bin:/home/users/u104403/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/scripts/noConfigScripts
-++ PATH=/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/bin:/apps/USE/easybuild/staging/2024.1/software/Ninja/1.12.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/CMake/3.29.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/libarchive/3.7.4-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/cURL/8.7.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/UCX/1.16.0-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/numactl/2.0.18-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Cython/3.0.10-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/SciPy-bundle/2024.05-gfbf-2024a/bin:/apps/USE/easybuild/staging/2024.1/software/pybind11/2.12.0-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/ICU/75.1-GCCcore-13.3.0/sbin:/apps/USE/easybuild/staging/2024.1/software/ICU/75.1-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/zstd/1.5.6-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/lz4/1.9.4-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/gzip/1.13-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Python-bundle-PyPI/2024.06-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/virtualenv/20.26.2-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Python/3.12.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/OpenSSL/3/bin:/apps/USE/easybuild/staging/2024.1/software/XZ/5.4.5-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/SQLite/3.45.3-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/Tcl/8.6.14-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/ncurses/6.5-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/bzip2/1.0.8-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/CUDA/12.6.0/nvvm/bin:/apps/USE/easybuild/staging/2024.1/software/CUDA/12.6.0/bin:/apps/USE/easybuild/staging/2024.1/software/FFTW/3.3.10-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/FlexiBLAS/3.4.4-GCC-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/binutils/2.42-GCCcore-13.3.0/bin:/apps/USE/easybuild/staging/2024.1/software/GCCcore/13.3.0/bin:/apps/USE/easybuild/system/software/myquota/0.3.4/bin:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/cli/servers/Stable-fc3def6774c76082adf699d366f31a557ce5573f/server/bin/remote-cli:/mnt/tier1/project/p201382/erisa/cargo/bin:/home/users/u104403/.local/bin:/home/users/u104403/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/mnt/tier2/project/p201382/erisa/vscode/.vscode-server/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/scripts/noConfigScripts
-++ export PATH
-++ '[' -n '' ']'
-++ '[' -z '' ']'
-++ _OLD_VIRTUAL_PS1=
-++ PS1='(.venv) '
-++ export PS1
-++ VIRTUAL_ENV_PROMPT='(.venv) '
-++ export VIRTUAL_ENV_PROMPT
-++ hash -r
-+ PWD=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL
-+ cd /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL
-+ export PYTHONPATH=
-+ PYTHONPATH=
-+ export HYDRA_FULL_ERROR=1
-+ HYDRA_FULL_ERROR=1
-+ export TOKENIZERS_PARALLELISM=false
-+ TOKENIZERS_PARALLELISM=false
-+ REWARD_PATH=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/reward.py
-+ echo 'Using reward file: /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/reward.py'
-+ test -f /project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/reward.py
-+ CHECKPOINT_PATH=/project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints
-+ TRAIN_FILE=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/data/structured-train.parquet
-+ TEST_FILE=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/data/structured-test.parquet
-+ MAX_PROMPT_LEN=5000
-+ MAX_RESPONSE_LEN=4000
-+ MAX_MODEL_LEN=9000
-+ MODEL_PATH=Qwen/Qwen2.5-1.5B-Instruct
-+ python3 -m verl.trainer.main_ppo data.train_files=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/data/structured-train.parquet data.val_files=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/data/structured-test.parquet data.train_batch_size=128 data.prompt_key=prompt data.max_prompt_length=5000 data.max_response_length=4000 data.return_raw_chat=True actor_rollout_ref.hybrid_engine=True actor_rollout_ref.model.path=Qwen/Qwen2.5-1.5B-Instruct actor_rollout_ref.model.use_remove_padding=True actor_rollout_ref.model.enable_gradient_checkpointing=True actor_rollout_ref.actor.strategy=fsdp actor_rollout_ref.actor.use_kl_loss=False actor_rollout_ref.actor.clip_ratio_low=0.2 actor_rollout_ref.actor.clip_ratio_high=0.28 actor_rollout_ref.actor.loss_agg_mode=token-mean actor_rollout_ref.actor.ppo_mini_batch_size=128 actor_rollout_ref.actor.use_dynamic_bsz=True actor_rollout_ref.actor.ppo_epochs=1 actor_rollout_ref.actor.entropy_coeff=0.0 actor_rollout_ref.actor.optim.lr=3e-6 'actor_rollout_ref.actor.optim.betas=[0.9,0.95]' 'actor_rollout_ref.actor.optim.override_optimizer_config={fused: true}' actor_rollout_ref.actor.optim.weight_decay=0.0 actor_rollout_ref.rollout.name=vllm actor_rollout_ref.rollout.top_k=-1 actor_rollout_ref.rollout.top_p=1.0 actor_rollout_ref.rollout.temperature=1.0 actor_rollout_ref.rollout.do_sample=True actor_rollout_ref.rollout.val_kwargs.temperature=0.0 actor_rollout_ref.rollout.val_kwargs.do_sample=False actor_rollout_ref.rollout.n=16 actor_rollout_ref.rollout.tensor_model_parallel_size=1 actor_rollout_ref.rollout.gpu_memory_utilization=0.7 actor_rollout_ref.rollout.max_model_len=9000 actor_rollout_ref.rollout.calculate_log_probs=True actor_rollout_ref.actor.fsdp_config.model_dtype=fp32 actor_rollout_ref.rollout.multi_turn.enable=True actor_rollout_ref.rollout.multi_turn.max_assistant_turns=6 actor_rollout_ref.rollout.multi_turn.max_user_turns=5 actor_rollout_ref.rollout.multi_turn.max_parallel_calls=1 actor_rollout_ref.rollout.multi_turn.max_tool_response_length=2048 actor_rollout_ref.rollout.multi_turn.format=hermes actor_rollout_ref.rollout.multi_turn.tool_response_truncate_side=middle actor_rollout_ref.rollout.multi_turn.tool_config_path=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/tools.yaml actor_rollout_ref.rollout.multi_turn.use_inference_chat_template=False actor_rollout_ref.rollout.multi_turn.tokenization_sanity_check_mode=strict algorithm.adv_estimator=grpo algorithm.use_kl_in_reward=False algorithm.rollout_correction.rollout_is=null algorithm.rollout_correction.rollout_rs=null algorithm.rollout_correction.bypass_mode=False algorithm.norm_adv_by_std_in_grpo=True +algorithm.filter_groups.enable=True +algorithm.filter_groups.metric=acc +algorithm.filter_groups.max_num_gen_batches=10 reward.custom_reward_function.path=/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/reward.py reward.custom_reward_function.name=multi_domain_reward_fn reward.reward_manager.source=register reward.reward_manager.name=dapo_overlong_penalty trainer.total_training_steps=10 trainer.save_freq=5 trainer.val_before_train=True trainer.test_freq=5 trainer.default_local_dir=/project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints trainer.project_name=multi_domain_rl trainer.experiment_name=structured_outputs 'trainer.logger=["wandb"]' trainer.nnodes=1 trainer.n_gpus_per_node=4 trainer.validation_data_dir=/project/home/p201382/erisa/Multi-Domain-RL/structured_outputs/checkpoints/Validation trainer.log_val_generations=8 trainer.resume_mode=disable
-/mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/trainer/main_ppo.py:167: UserWarning: Disabled critic as algorithm.adv_estimator != gae. If it is not intended, please set critic.enable=True
-  use_critic=need_critic(config),
-2026-07-29 16:17:43,610	INFO worker.py:2015 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
-[36m(TaskRunnerV1 pid=14225)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/mindspeed/transformer_impl.py:24: UserWarning: NPU not support router replay for now.
-[36m(TaskRunnerV1 pid=14225)[0m   from verl.utils.megatron.router_replay_patch import RouterReplay
-[36m(TaskRunnerV1 pid=14225)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/trainer/ppo/v1/trainer_base.py:113: UserWarning: Disabled critic as algorithm.adv_estimator != gae. If it is not intended, please set critic.enable=True
-[36m(TaskRunnerV1 pid=14225)[0m   self.use_critic = need_critic(self.config)
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:18:58,754:train and validate dataloader initialized, train dataset size: 2698, val dataset size: 143
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:18:58,754:Total training steps: 10
-[36m(TaskRunnerV1 pid=14225)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/trainer/ppo/v1/trainer_base.py:596: UserWarning: Disabled critic as algorithm.adv_estimator != gae. If it is not intended, please set critic.enable=True
-[36m(TaskRunnerV1 pid=14225)[0m   if need_critic(config):
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:18:58,759:worker group kwargs: {'device_name': 'cuda'}
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:19:03,082:create worker group dict_keys(['actor_rollout'])
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/mindspeed/transformer_impl.py:24: UserWarning: NPU not support router replay for now.
-[36m(WorkerDict pid=16396)[0m   from verl.utils.megatron.router_replay_patch import RouterReplay
-[36m(WorkerDict pid=16397)[0m [transformers] Flash Attention 2 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Qwen2ForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `dtype` argument. Example: `model = AutoModel.from_pretrained("meta-llama/Llama-3.2-1B", attn_implementation="flash_attention_2", dtype=torch.float16)`
-[36m(WorkerDict pid=16397)[0m [transformers] Flash Attention 2 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Qwen2Model is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `dtype` argument. Example: `model = AutoModel.from_pretrained("meta-llama/Llama-3.2-1B", attn_implementation="flash_attention_2", dtype=torch.float16)`
-[36m(WorkerDict pid=16397)[0m Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]
-[36m(WorkerDict pid=16397)[0m Loading weights:   0%|          | 1/338 [00:11<1:04:11, 11.43s/it]
-[36m(WorkerDict pid=16399)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/mindspeed/transformer_impl.py:24: UserWarning: NPU not support router replay for now.[32m [repeated 3x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
-[36m(WorkerDict pid=16399)[0m   from verl.utils.megatron.router_replay_patch import RouterReplay[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m [transformers] Flash Attention 2 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in Qwen2Model is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `dtype` argument. Example: `model = AutoModel.from_pretrained("meta-llama/Llama-3.2-1B", attn_implementation="flash_attention_2", dtype=torch.float16)`[32m [repeated 6x across cluster][0m
-[36m(WorkerDict pid=16396)[0m Loading weights:   0%|          | 0/338 [00:00<?, ?it/s][32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16397)[0m Loading weights:  79%|███████▉  | 267/338 [00:16<00:03, 20.21it/s][32m [repeated 24x across cluster][0m
-[36m(WorkerDict pid=16397)[0m Loading weights:  93%|█████████▎| 315/338 [00:18<00:01, 19.53it/s]
-[36m(WorkerDict pid=16397)[0m Loading weights:  98%|█████████▊| 330/338 [00:19<00:00, 22.72it/s]Loading weights: 100%|██████████| 338/338 [00:19<00:00, 17.43it/s]
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/fsdp/transformer_impl.py:464: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
-[36m(WorkerDict pid=16397)[0m   FSDP.set_state_dict_type(
-[36m(WorkerDict pid=16396)[0m Loading weights:  91%|█████████ | 306/338 [00:18<00:01, 20.58it/s][32m [repeated 31x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:20:18,433:actor and ref model engine initialized
-[36m(WorkerDict pid=16396)[0m Loading weights:  97%|█████████▋| 327/338 [00:19<00:00, 22.85it/s][32m [repeated 11x across cluster][0m
-[36m(WorkerDict pid=16396)[0m Loading weights:  98%|█████████▊| 330/338 [00:19<00:00, 22.72it/s]Loading weights: 100%|██████████| 338/338 [00:19<00:00, 17.43it/s][32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/fsdp/transformer_impl.py:464: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   FSDP.set_state_dict_type([32m [repeated 3x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m INFO:2026-07-29 16:20:18,733:reward loop manager initialized
-[36m(vLLMHttpServer pid=17874)[0m (Worker pid=20105) <frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.
-[36m(vLLMHttpServer pid=17874)[0m (Worker pid=20105) <frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.nvrtc module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.nvrtc module instead.
-[36m(vLLMHttpServer pid=17875)[0m (Worker pid=20108) Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s]
-[36m(vLLMHttpServer pid=17875)[0m (Worker pid=20108) <frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.[32m [repeated 3x across cluster][0m
-[36m(vLLMHttpServer pid=17875)[0m (Worker pid=20108) <frozen importlib._bootstrap_external>:1297: FutureWarning: The cuda.nvrtc module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.nvrtc module instead.[32m [repeated 3x across cluster][0m
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   6%|▌         | 3/51 [00:00<00:01, 24.77it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  14%|█▎        | 7/51 [00:00<00:01, 32.36it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  22%|██▏       | 11/51 [00:00<00:01, 34.99it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  29%|██▉       | 15/51 [00:00<00:01, 35.64it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  92%|█████████▏| 47/51 [00:01<00:00, 34.82it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 51/51 [00:01<00:00, 31.52it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 51/51 [00:01<00:00, 34.62it/s]
-[36m(vLLMHttpServer pid=17875)[0m (Worker pid=20108) Capturing CUDA graphs (decode, FULL):   0%|          | 0/51 [00:00<?, ?it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (decode, FULL):   8%|▊         | 4/51 [00:00<00:01, 36.70it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (decode, FULL):  16%|█▌        | 8/51 [00:00<00:01, 36.82it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (decode, FULL):  24%|██▎       | 12/51 [00:00<00:01, 37.03it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (decode, FULL):  94%|█████████▍| 48/51 [00:01<00:00, 37.23it/s]
-[36m(vLLMHttpServer pid=17875)[0m Capturing CUDA graphs (decode, FULL): 100%|██████████| 51/51 [00:01<00:00, 35.91it/s]
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.
-[36m(WorkerDict pid=16397)[0m   torch.cuda.memory._set_allocator_settings(settings)
-[36m(vLLMHttpServer pid=17876)[0m (Worker pid=20106) Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/51 [00:00<?, ?it/s][32m [repeated 3x across cluster][0m
-[36m(vLLMHttpServer pid=17876)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  86%|████████▋ | 44/51 [00:01<00:00, 36.03it/s][32m [repeated 40x across cluster][0m
-[36m(vLLMHttpServer pid=17876)[0m Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 51/51 [00:01<00:00, 36.27it/s][32m [repeated 6x across cluster][0m
-[36m(vLLMHttpServer pid=17876)[0m (Worker pid=20106) Capturing CUDA graphs (decode, FULL):   0%|          | 0/51 [00:00<?, ?it/s][32m [repeated 3x across cluster][0m
-[36m(vLLMHttpServer pid=17876)[0m Capturing CUDA graphs (decode, FULL):  86%|████████▋ | 44/51 [00:01<00:00, 35.19it/s][32m [repeated 41x across cluster][0m
-[36m(vLLMHttpServer pid=17876)[0m Capturing CUDA graphs (decode, FULL): 100%|██████████| 51/51 [00:01<00:00, 35.38it/s][32m [repeated 6x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home/users/u104403/.netrc.
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Currently logged in as: erisa-kohansal (erisa-kohansal-sorbonne-universit-) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   torch.cuda.memory._set_allocator_settings(settings)[32m [repeated 3x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m wandb: setting up run nb5ctv2w
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Tracking run with wandb version 0.28.0
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Run data is saved locally in /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL/wandb/run-20260729_162322-nb5ctv2w
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Run `wandb offline` to turn off syncing.
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Syncing run structured_outputs
-[36m(TaskRunnerV1 pid=14225)[0m wandb: ⭐️ View project at https://wandb.ai/erisa-kohansal-sorbonne-universit-/multi_domain_rl
-[36m(TaskRunnerV1 pid=14225)[0m wandb: 🚀 View run at https://wandb.ai/erisa-kohansal-sorbonne-universit-/multi_domain_rl/runs/nb5ctv2w
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Detected [openai] in use.
-[36m(TaskRunnerV1 pid=14225)[0m wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
-[36m(TaskRunnerV1 pid=14225)[0m wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
-[36m(pid=21756)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/mindspeed/transformer_impl.py:24: UserWarning: NPU not support router replay for now.
-[36m(pid=21756)[0m   from verl.utils.megatron.router_replay_patch import RouterReplay
-[36m(AgentLoopWorkerTQ pid=21752)[0m Using blocking ray.get inside async actor. This blocks the event loop. Please use `await` on object ref with asyncio.gather if you want to yield execution to the event loop instead.
-[36m(TransferQueueController pid=15119)[0m 2026-07-29 16:23:59,931 - INFO - transfer_queue.utils.perf_utils - TQ_CONTROLLER_f7cf75a3: [Performance] Total success requests: 3, Total req/min: 0.56, Total avg process time: 0.0145s; 
-[36m(TransferQueueController pid=15119)[0m Time range: last 5.36 minutes; 
-[36m(TransferQueueController pid=15119)[0m Per-operation statistics: KV_RETRIEVE_META: req_count=2, req/min=0.37, avg_time=0.021781s, max_time=0.027839s, min_time=0.015724s; SET_CUSTOM_META: req_count=1, req/min=0.19, avg_time=0.000024s, max_time=0.000024s, min_time=0.000024s
-[36m(SimpleStorageUnit pid=15474)[0m Per-operation statistics: PUT_DATA: req_count=1, req/min=0.19, avg_time=0.005263s, max_time=0.005263s, min_time=0.005263s
-[36m(pid=21750)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/workers/engine/mindspeed/transformer_impl.py:24: UserWarning: NPU not support router replay for now.[32m [repeated 7x across cluster][0m
-[36m(pid=21750)[0m   from verl.utils.megatron.router_replay_patch import RouterReplay[32m [repeated 7x across cluster][0m
-[36m(AgentLoopWorkerTQ pid=21754)[0m Using blocking ray.get inside async actor. This blocks the event loop. Please use `await` on object ref with asyncio.gather if you want to yield execution to the event loop instead.[32m [repeated 7x across cluster][0m
-[36m(SimpleStorageUnit pid=15474)[0m 2026-07-29 16:24:05,553 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_00e551e4: [Performance] Total success requests: 1, Total req/min: 0.19, Total avg process time: 0.0053s; 
-[36m(SimpleStorageUnit pid=15474)[0m Time range: last 5.18 minutes; 
-[36m(SimpleStorageUnit pid=15480)[0m 2026-07-29 16:24:05,674 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_ec565d8b: [Performance] Total success requests: 1, Total req/min: 0.19, Total avg process time: 0.0048s; 
-[36m(SimpleStorageUnit pid=15480)[0m Time range: last 5.19 minutes; 
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:   0%|          | 0/10 [00:00<?, ?it/s]
-[36m(SimpleStorageUnit pid=15479)[0m Per-operation statistics: PUT_DATA: req_count=1, req/min=0.19, avg_time=0.004484s, max_time=0.004484s, min_time=0.004484s[32m [repeated 7x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m 2026-07-29 16:24:05,728 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_738e3c61: [Performance] Total success requests: 1, Total req/min: 0.19, Total avg process time: 0.0045s; [32m [repeated 6x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m Time range: last 5.19 minutes; [32m [repeated 6x across cluster][0m
-[36m(RewardLoopWorker pid=17859)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/openapi_schema_validator/_regex.py:25: FutureWarning: Possible nested set at position 5
-[36m(RewardLoopWorker pid=17859)[0m   re.compile(pattern)
-[36m(WorkerDict pid=16397)[0m Using blocking ray.get inside async actor. This blocks the event loop. Please use `await` on object ref with asyncio.gather if you want to yield execution to the event loop instead.
-[36m(RewardLoopWorker pid=17861)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/openapi_schema_validator/_regex.py:25: FutureWarning: Possible nested set at position 5[32m [repeated 6x across cluster][0m
-[36m(RewardLoopWorker pid=17861)[0m   re.compile(pattern)[32m [repeated 6x across cluster][0m
-[36m(WorkerDict pid=16397)[0m [rank1]:W0729 16:25:03.283000 16397 torch/fx/_symbolic_trace.py:53] is_fx_tracing will return true for both fx.symbolic_trace and torch.export. Please use is_fx_tracing_symbolic_tracing() for specifically fx.symbolic_trace or torch.compiler.is_compiling() for specifically torch.export/compile.
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/torch/_inductor/lowering.py:7836: UserWarning: 
-[36m(WorkerDict pid=16397)[0m Online softmax is disabled on the fly since Inductor decides to
-[36m(WorkerDict pid=16397)[0m split the reduction. Cut an issue to PyTorch if this is an
-[36m(WorkerDict pid=16397)[0m important use case and you want to speed it up with online
-[36m(WorkerDict pid=16397)[0m softmax.
-[36m(WorkerDict pid=16397)[0m 
-[36m(WorkerDict pid=16397)[0m   warnings.warn(
-[36m(WorkerDict pid=16396)[0m Using blocking ray.get inside async actor. This blocks the event loop. Please use `await` on object ref with asyncio.gather if you want to yield execution to the event loop instead.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m [rank0]:W0729 16:25:03.283000 16396 torch/fx/_symbolic_trace.py:53] is_fx_tracing will return true for both fx.symbolic_trace and torch.export. Please use is_fx_tracing_symbolic_tracing() for specifically fx.symbolic_trace or torch.compiler.is_compiling() for specifically torch.export/compile.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16398)[0m 
-[36m(WorkerDict pid=16399)[0m 
-[36m(WorkerDict pid=16396)[0m 
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.
-[36m(WorkerDict pid=16397)[0m   torch.cuda.memory._set_allocator_settings(settings)
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/torch/_inductor/lowering.py:7836: UserWarning: [32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m Online softmax is disabled on the fly since Inductor decides to[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m split the reduction. Cut an issue to PyTorch if this is an[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m important use case and you want to speed it up with online[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m softmax.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   warnings.warn([32m [repeated 3x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  10%|█         | 1/10 [02:24<21:39, 144.44s/it]
-[36m(RewardLoopWorker pid=17865)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/.venv/lib/python3.12/site-packages/openapi_schema_validator/_regex.py:25: FutureWarning: Possible nested set at position 5
-[36m(RewardLoopWorker pid=17865)[0m   re.compile(pattern)
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   torch.cuda.memory._set_allocator_settings(settings)[32m [repeated 3x across cluster][0m
-[36m(TransferQueueController pid=15119)[0m 2026-07-29 16:29:08,035 - INFO - transfer_queue.utils.perf_utils - TQ_CONTROLLER_f7cf75a3: [Performance] Total success requests: 14416, Total req/min: 2807.37, Total avg process time: 0.0002s; 
-[36m(TransferQueueController pid=15119)[0m Time range: last 5.14 minutes; 
-[36m(TransferQueueController pid=15119)[0m Per-operation statistics: KV_RETRIEVE_META: req_count=5059, req/min=985.19, avg_time=0.000549s, max_time=0.332137s, min_time=0.000090s; SET_CUSTOM_META: req_count=5051, req/min=983.63, avg_time=0.000016s, max_time=0.000606s, min_time=0.000009s; KV_LIST: req_count=48, req/min=9.35, avg_time=0.000491s, max_time=0.001627s, min_time=0.000039s; NOTIFY_DATA_UPDATE: req_count=4251, req/min=827.84, avg_time=0.000133s, max_time=0.009027s, min_time=0.000083s; CLEAR_META: req_count=5, req/min=0.97, avg_time=0.004656s, max_time=0.011840s, min_time=0.000528s; KV_RETRIEVE_KEYS: req_count=2, req/min=0.39, avg_time=0.000685s, max_time=0.000706s, min_time=0.000664s
-[36m(SimpleStorageUnit pid=15474)[0m Per-operation statistics: PUT_DATA: req_count=545, req/min=108.09, avg_time=0.005874s, max_time=0.020422s, min_time=0.002710s; CLEAR_DATA: req_count=5, req/min=0.99, avg_time=0.009291s, max_time=0.014631s, min_time=0.007303s; GET_DATA: req_count=24, req/min=4.76, avg_time=0.006806s, max_time=0.009137s, min_time=0.003532s
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  20%|██        | 2/10 [04:41<18:38, 139.83s/it]
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  30%|███       | 3/10 [06:57<16:09, 138.48s/it]
-[36m(SimpleStorageUnit pid=15473)[0m 2026-07-29 16:29:08,086 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_c99f40b7: [Performance] Total success requests: 570, Total req/min: 113.07, Total avg process time: 0.0062s; [32m [repeated 8x across cluster][0m
-[36m(SimpleStorageUnit pid=15473)[0m Time range: last 5.04 minutes; [32m [repeated 8x across cluster][0m
-[36m(SimpleStorageUnit pid=15473)[0m Per-operation statistics: PUT_DATA: req_count=541, req/min=107.31, avg_time=0.006153s, max_time=0.016764s, min_time=0.002836s; CLEAR_DATA: req_count=5, req/min=0.99, avg_time=0.009556s, max_time=0.015175s, min_time=0.006603s; GET_DATA: req_count=24, req/min=4.76, avg_time=0.007497s, max_time=0.009925s, min_time=0.004185s[32m [repeated 7x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  40%|████      | 4/10 [09:22<14:06, 141.02s/it]
-[36m(TransferQueueController pid=15119)[0m 2026-07-29 16:34:08,037 - INFO - transfer_queue.utils.perf_utils - TQ_CONTROLLER_f7cf75a3: [Performance] Total success requests: 17067, Total req/min: 3413.40, Total avg process time: 0.0002s; 
-[36m(TransferQueueController pid=15119)[0m Time range: last 5.00 minutes; 
-[36m(TransferQueueController pid=15119)[0m Per-operation statistics: KV_RETRIEVE_META: req_count=5911, req/min=1182.20, avg_time=0.000496s, max_time=0.142539s, min_time=0.000214s; CLEAR_META: req_count=5, req/min=1.00, avg_time=0.010959s, max_time=0.016783s, min_time=0.006452s; SET_CUSTOM_META: req_count=5889, req/min=1177.80, avg_time=0.000016s, max_time=0.000696s, min_time=0.000009s; KV_LIST: req_count=44, req/min=8.80, avg_time=0.000695s, max_time=0.002266s, min_time=0.000064s; NOTIFY_DATA_UPDATE: req_count=5216, req/min=1043.20, avg_time=0.000123s, max_time=0.004839s, min_time=0.000085s; KV_RETRIEVE_KEYS: req_count=2, req/min=0.40, avg_time=0.000798s, max_time=0.000872s, min_time=0.000724s
-[36m(SimpleStorageUnit pid=15476)[0m Per-operation statistics: CLEAR_DATA: req_count=5, req/min=1.00, avg_time=0.014556s, max_time=0.019646s, min_time=0.008795s; PUT_DATA: req_count=667, req/min=133.40, avg_time=0.005579s, max_time=0.015787s, min_time=0.002735s; GET_DATA: req_count=22, req/min=4.40, avg_time=0.008561s, max_time=0.010464s, min_time=0.005773s
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.
-[36m(WorkerDict pid=16397)[0m   torch.cuda.memory._set_allocator_settings(settings)
-[36m(SimpleStorageUnit pid=15474)[0m 2026-07-29 16:34:08,138 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_00e551e4: [Performance] Total success requests: 713, Total req/min: 142.58, Total avg process time: 0.0053s; [32m [repeated 8x across cluster][0m
-[36m(SimpleStorageUnit pid=15474)[0m Time range: last 5.00 minutes; [32m [repeated 8x across cluster][0m
-[36m(SimpleStorageUnit pid=15474)[0m Per-operation statistics: CLEAR_DATA: req_count=5, req/min=1.00, avg_time=0.014053s, max_time=0.019452s, min_time=0.008896s; PUT_DATA: req_count=686, req/min=137.18, avg_time=0.005180s, max_time=0.015104s, min_time=0.002773s; GET_DATA: req_count=22, req/min=4.40, avg_time=0.008192s, max_time=0.011687s, min_time=0.004292s[32m [repeated 7x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  50%|█████     | 5/10 [12:01<12:17, 147.46s/it]
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   torch.cuda.memory._set_allocator_settings(settings)[32m [repeated 3x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  60%|██████    | 6/10 [14:17<09:33, 143.45s/it]
-[36m(TransferQueueController pid=15119)[0m 2026-07-29 16:39:08,237 - INFO - transfer_queue.utils.perf_utils - TQ_CONTROLLER_f7cf75a3: [Performance] Total success requests: 17377, Total req/min: 3473.06, Total avg process time: 0.0002s; 
-[36m(TransferQueueController pid=15119)[0m Time range: last 5.00 minutes; 
-[36m(TransferQueueController pid=15119)[0m Per-operation statistics: KV_RETRIEVE_META: req_count=6068, req/min=1212.78, avg_time=0.000472s, max_time=0.083726s, min_time=0.000198s; SET_CUSTOM_META: req_count=6072, req/min=1213.58, avg_time=0.000016s, max_time=0.000640s, min_time=0.000009s; NOTIFY_DATA_UPDATE: req_count=5182, req/min=1035.70, avg_time=0.000134s, max_time=0.010813s, min_time=0.000085s; KV_LIST: req_count=47, req/min=9.39, avg_time=0.000974s, max_time=0.003065s, min_time=0.000104s; CLEAR_META: req_count=6, req/min=1.20, avg_time=0.006413s, max_time=0.013847s, min_time=0.000650s; KV_RETRIEVE_KEYS: req_count=2, req/min=0.40, avg_time=0.000829s, max_time=0.000841s, min_time=0.000818s
-[36m(SimpleStorageUnit pid=15475)[0m Per-operation statistics: PUT_DATA: req_count=654, req/min=130.74, avg_time=0.006494s, max_time=0.016887s, min_time=0.002751s; CLEAR_DATA: req_count=6, req/min=1.20, avg_time=0.010559s, max_time=0.017361s, min_time=0.006670s; GET_DATA: req_count=24, req/min=4.80, avg_time=0.007117s, max_time=0.009918s, min_time=0.004319s
-[36m(SimpleStorageUnit pid=15480)[0m 2026-07-29 16:39:13,229 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_ec565d8b: [Performance] Total success requests: 706, Total req/min: 138.83, Total avg process time: 0.0066s; [32m [repeated 5x across cluster][0m
-[36m(SimpleStorageUnit pid=15480)[0m Time range: last 5.09 minutes; [32m [repeated 5x across cluster][0m
-[36m(SimpleStorageUnit pid=15480)[0m Per-operation statistics: PUT_DATA: req_count=676, req/min=132.93, avg_time=0.006534s, max_time=0.021689s, min_time=0.002749s; CLEAR_DATA: req_count=6, req/min=1.18, avg_time=0.011024s, max_time=0.017870s, min_time=0.006630s; GET_DATA: req_count=24, req/min=4.72, avg_time=0.007067s, max_time=0.011495s, min_time=0.004005s[32m [repeated 4x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  70%|███████   | 7/10 [16:30<07:00, 140.09s/it]
-[36m(SimpleStorageUnit pid=15479)[0m 2026-07-29 16:39:17,834 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_738e3c61: [Performance] Total success requests: 684, Total req/min: 132.50, Total avg process time: 0.0065s; [32m [repeated 3x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m Time range: last 5.16 minutes; [32m [repeated 3x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m Per-operation statistics: PUT_DATA: req_count=653, req/min=126.50, avg_time=0.006408s, max_time=0.019740s, min_time=0.002768s; CLEAR_DATA: req_count=7, req/min=1.36, avg_time=0.010990s, max_time=0.020940s, min_time=0.006651s; GET_DATA: req_count=24, req/min=4.65, avg_time=0.007531s, max_time=0.010102s, min_time=0.005481s[32m [repeated 3x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  80%|████████  | 8/10 [18:49<04:39, 139.60s/it]
-2026-07-29 16:43:39,596	WARNING worker.py:1107 -- The driver may not be able to keep up with the stdout/stderr of the workers. To avoid forwarding logs to the driver, use 'ray.init(log_to_driver=False)'.
-[36m(TransferQueueController pid=15119)[0m 2026-07-29 16:44:11,447 - INFO - transfer_queue.utils.perf_utils - TQ_CONTROLLER_f7cf75a3: [Performance] Total success requests: 13451, Total req/min: 2661.71, Total avg process time: 0.0003s; 
-[36m(TransferQueueController pid=15119)[0m Time range: last 5.05 minutes; 
-[36m(TransferQueueController pid=15119)[0m Per-operation statistics: NOTIFY_DATA_UPDATE: req_count=4118, req/min=814.88, avg_time=0.000131s, max_time=0.009587s, min_time=0.000089s; SET_CUSTOM_META: req_count=4640, req/min=918.17, avg_time=0.000016s, max_time=0.000922s, min_time=0.000009s; KV_RETRIEVE_META: req_count=4647, req/min=919.56, avg_time=0.000611s, max_time=0.349197s, min_time=0.000217s; KV_LIST: req_count=39, req/min=7.72, avg_time=0.000849s, max_time=0.002637s, min_time=0.000144s; CLEAR_META: req_count=5, req/min=0.99, avg_time=0.011229s, max_time=0.019628s, min_time=0.004602s; KV_RETRIEVE_KEYS: req_count=2, req/min=0.40, avg_time=0.000893s, max_time=0.000894s, min_time=0.000892s
-[36m(SimpleStorageUnit pid=15478)[0m Per-operation statistics: PUT_DATA: req_count=522, req/min=103.59, avg_time=0.006436s, max_time=0.016866s, min_time=0.002707s; CLEAR_DATA: req_count=5, req/min=0.99, avg_time=0.012115s, max_time=0.018440s, min_time=0.007740s; GET_DATA: req_count=26, req/min=5.16, avg_time=0.007088s, max_time=0.010760s, min_time=0.003531s
-[36m(SimpleStorageUnit pid=15477)[0m Per-operation statistics: CLEAR_DATA: req_count=5, req/min=1.00, avg_time=0.013466s, max_time=0.022528s, min_time=0.006635s; GET_DATA: req_count=26, req/min=5.20, avg_time=0.008224s, max_time=0.010758s, min_time=0.004094s; PUT_DATA: req_count=530, req/min=105.97, avg_time=0.006550s, max_time=0.038974s, min_time=0.002702s
-[36m(SimpleStorageUnit pid=15474)[0m Per-operation statistics: GET_DATA: req_count=33, req/min=5.34, avg_time=0.007811s, max_time=0.010757s, min_time=0.003818s; PUT_DATA: req_count=531, req/min=85.90, avg_time=0.006378s, max_time=0.034616s, min_time=0.002657s; CLEAR_DATA: req_count=4, req/min=0.65, avg_time=0.013963s, max_time=0.020061s, min_time=0.008544s
-[36m(SimpleStorageUnit pid=15474)[0m 2026-07-29 16:45:28,738 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_00e551e4: [Performance] Total success requests: 568, Total req/min: 91.88, Total avg process time: 0.0065s; [32m [repeated 6x across cluster][0m
-[36m(SimpleStorageUnit pid=15474)[0m Time range: last 6.18 minutes; [32m [repeated 6x across cluster][0m
-[36m(SimpleStorageUnit pid=15480)[0m Per-operation statistics: PUT_DATA: req_count=522, req/min=104.21, avg_time=0.006685s, max_time=0.029900s, min_time=0.002693s; CLEAR_DATA: req_count=5, req/min=1.00, avg_time=0.012473s, max_time=0.019761s, min_time=0.007644s; GET_DATA: req_count=28, req/min=5.59, avg_time=0.007968s, max_time=0.011970s, min_time=0.003613s[32m [repeated 2x across cluster][0m
-[36m(SimpleStorageUnit pid=15475)[0m Per-operation statistics: CLEAR_DATA: req_count=5, req/min=0.99, avg_time=0.012177s, max_time=0.017925s, min_time=0.007792s; GET_DATA: req_count=26, req/min=5.15, avg_time=0.008060s, max_time=0.010697s, min_time=0.005242s; PUT_DATA: req_count=546, req/min=108.06, avg_time=0.006870s, max_time=0.018519s, min_time=0.002731s
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress:  90%|█████████ | 9/10 [21:01<02:17, 137.49s/it]
-[36m(WorkerDict pid=16397)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.
-[36m(WorkerDict pid=16397)[0m   torch.cuda.memory._set_allocator_settings(settings)
-[36m(SimpleStorageUnit pid=15479)[0m Per-operation statistics: GET_DATA: req_count=33, req/min=5.34, avg_time=0.008220s, max_time=0.011338s, min_time=0.005209s; PUT_DATA: req_count=528, req/min=85.41, avg_time=0.006541s, max_time=0.016668s, min_time=0.002715s; CLEAR_DATA: req_count=4, req/min=0.65, avg_time=0.014082s, max_time=0.019949s, min_time=0.008082s[32m [repeated 2x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m 2026-07-29 16:45:28,741 - INFO - transfer_queue.utils.perf_utils - TQ_STORAGE_UNIT_738e3c61: [Performance] Total success requests: 565, Total req/min: 91.40, Total avg process time: 0.0067s; [32m [repeated 2x across cluster][0m
-[36m(SimpleStorageUnit pid=15479)[0m Time range: last 6.18 minutes; [32m [repeated 2x across cluster][0m
-[36m(TaskRunnerV1 pid=14225)[0m Training Progress: 100%|██████████| 10/10 [23:31<00:00, 141.30s/it]Training Progress: 100%|██████████| 10/10 [23:31<00:00, 141.18s/it]
-[36m(WorkerDict pid=16396)[0m /mnt/tier1/project/p201382/erisa/Internship/Cascade2/verl-version/verl/verl/plugin/platform/platform_cuda.py:99: FutureWarning: torch.cuda._set_allocator_settings is deprecated. Use torch._C._accelerator_setAllocatorSettings instead.[32m [repeated 3x across cluster][0m
-[36m(WorkerDict pid=16396)[0m   torch.cuda.memory._set_allocator_settings(settings)[32m [repeated 3x across cluster][0m
