@@ -25,12 +25,34 @@ import datasets
 from verl.utils.hdfs_io import copy, makedirs
 
 
-
 SYSTEM_PROMPT = (
-    "You are a careful math problem solver. You may call the `calculator` "
-    "tool for arithmetic you are not fully confident in. Reason step by "
-    "step, then give your final answer as \\boxed{answer}."
+    "You are a careful math problem solver. For every arithmetic calculation, "
+    "you must call the calculator tool. After receiving each tool result, "
+    "continue solving and give the final answer exactly as \\boxed{answer}."
 )
+
+
+CALCULATOR = {
+    "type": "function",
+    "function": {
+        "name": "calculator",
+        "description": "Evaluate an arithmetic expression, e.g. '48 + 48/2'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "The arithmetic expression to evaluate.",
+                }
+            },
+            "required": ["expression"],
+            "additionalProperties": False,
+        },
+        "strict": False,
+    },
+}
+
+
 
 def extract_solution(solution_str):
     solution = re.search("#### (\\-?[0-9\\.\\,]+)", solution_str)
@@ -86,6 +108,7 @@ if __name__ == "__main__":
                         "content": question,
                     }
                 ],
+                "tool_selection": "calculator",
                 "ability": "math",
                 "reward_model": {"style": "rule", "ground_truth": solution},
                 "extra_info": {
@@ -115,4 +138,4 @@ if __name__ == "__main__":
     if hdfs_dir is not None:
         makedirs(hdfs_dir)
 
-        copy(src=local_save_dir, dst=hdfs_dir)
+        copy(src=local_save_dir, dst=hdfs_dir)    

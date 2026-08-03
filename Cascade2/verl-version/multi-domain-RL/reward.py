@@ -232,13 +232,11 @@ def mcqa_reward_fn(data_source, solution_str, ground_truth, extra_info=None):
     if template_metadata and "output_regex" in template_metadata:
         regex_patterns = template_metadata["output_regex"]
         pred = _parse_answer_with_custom_regexes(text, regex_patterns, allowed_letters, options)
-        print("\tparsed answer from template_metadata regex:", pred)
 
     # Fallback to existing grading_mode logic if template_metadata didn't work
     if pred is None:
         if grading_mode == "strict_single_letter_boxed":
             pred, _, _ = _parse_answer_letter_strict_boxed(text, allowed_letters)
-            print("\tparsed answer from strict_single_letter_boxed:", pred)
         elif grading_mode == "lenient_boxed":
             # Try strict boxed first
             pred, _, _ = _parse_answer_letter_strict_boxed(text, allowed_letters)
@@ -322,7 +320,7 @@ def try_parse_tool_calls(content: str):
             })
 
         except Exception as e:
-            print(f"Failed to parse tool calls: the content is {match!r} and {e}")
+            print(f"Failed to parse tool calls: {e}")
             pass 
 
     return tool_calls

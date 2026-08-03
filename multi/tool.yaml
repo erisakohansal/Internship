@@ -1,0 +1,20 @@
+tools:
+  - class_name: "tool.CalculatorTool"
+    config:
+      type: native
+    tool_schema:
+      type: "function"
+      function: 
+        name: "calculator"
+        description: "Evaluate an arithmetic expression, e.g. '48 + 48/2'."
+        parameters: 
+          type: "object"
+          properties: 
+            expression: 
+              type: "string"
+              description: "The arithmetic expression to evaluate."
+          required: ["expression"]
+          additionalProperties: false
+        strict: false
+      
+  

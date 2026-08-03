@@ -282,12 +282,12 @@ if __name__ == "__main__":
     format_dataset_multi_domain()
 
     # PWD="/project/scratch/p201382/erisa/Internship/Cascade2/verl-version/multi-domain-RL"
-    # TRAIN_FILE=f"{PWD}/multi-domain-RL-train.parquet"
+    # TRAIN_FILE=f"{PWD}/data/multi-domain-RL-train.parquet"
     # import pandas as pd
     # df = pd.read_parquet(TRAIN_FILE)
     # structured_df = df[
     # df["extra_info"].apply(
-    #         lambda extra_info: extra_info.get("agent_ref") == "structured_outputs"
+    #         lambda extra_info: extra_info.get("agent_ref") == "structured_outputs_simple_agent"
     #     )
     # ]
 

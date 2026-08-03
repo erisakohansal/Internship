@@ -32,9 +32,9 @@ export TOKENIZERS_PARALLELISM=false
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-turn/checkpoints"
-TRAIN_FILE="$PWD/gsm8k/train.parquet" 
-TEST_FILE="$PWD/gsm8k/test.parquet" 
+CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-turn/yup/checkpoints"
+TRAIN_FILE="$PWD/data/train.parquet" 
+TEST_FILE="$PWD/data/test.parquet" 
 MAX_PROMPT_LEN=5000
 MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
@@ -83,7 +83,7 @@ python3 -m verl.trainer.main_ppo \
   actor_rollout_ref.rollout.mode=async \
   actor_rollout_ref.rollout.multi_turn.enable=True \
   actor_rollout_ref.rollout.multi_turn.format=hermes \
-  actor_rollout_ref.rollout.multi_turn.function_tool_path="$PWD/tool.py" \
+  actor_rollout_ref.rollout.multi_turn.tool_config_path="$PWD/tool.yaml" \
   actor_rollout_ref.rollout.multi_turn.max_user_turns=3 \
   actor_rollout_ref.rollout.multi_turn.max_assistant_turns=4 \
   actor_rollout_ref.rollout.agent.default_agent_loop=tool_agent \
@@ -104,12 +104,12 @@ python3 -m verl.trainer.main_ppo \
   reward.reward_manager.source=register \
   reward.reward_manager.name=dapo \
   trainer.total_training_steps=50 \
-  trainer.save_freq=5 \
+  trainer.save_freq=25 \
   trainer.val_before_train=True \
   trainer.test_freq=5 \
   trainer.default_local_dir="$CHECKPOINT_PATH" \
   trainer.project_name=multiturn \
-  trainer.experiment_name=multiturn \
+  trainer.experiment_name=yup \
   trainer.logger='["wandb"]' \
   trainer.nnodes=1 \
   trainer.n_gpus_per_node=4 \

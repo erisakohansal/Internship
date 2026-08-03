@@ -57,9 +57,16 @@ class DAPORewardManagerNemotron(RewardManagerBase):
         ground_truth = data_item.non_tensor_batch["reward_model"]["ground_truth"]
         extra_info = data_item.non_tensor_batch.get("extra_info", {})
         # for workplace agent (tool calling)
-        tool_extra_fields = data_item.non_tensor_batch.get("tool_extra_fields", {})
-        predicted_actions = tool_extra_fields.get("predicted_actions", [])
-        extra_info["predicted_actions"] = predicted_actions
+        tool_extra_fields = (
+            data_item.non_tensor_batch.get("tool_extra_fields") or {}
+        )
+        extra_info = dict(
+            data_item.non_tensor_batch.get("extra_info") or {}
+        )
+        extra_info["predicted_actions"] = tool_extra_fields.get(
+            "predicted_actions", []
+        )
+
 
         response_str = await self.loop.run_in_executor(
             None, lambda: self.tokenizer.decode(valid_response_ids, skip_special_tokens=True)
@@ -118,5 +125,19 @@ class DAPORewardManagerNemotron(RewardManagerBase):
             
             if is_overlong:   
                 reward = 0.0
+
+        agent_ref = extra_info.get("agent_ref", None)
+        if agent_ref:
+            domains = {
+                "mcqa_simple_agent": "mcqa",
+                "workplace_assistant_simple_agent": "workplace assistant",
+                "structured_outputs_simple_agent": "structured outputs",
+            }
+            for domain in domains.keys():
+                is_domain = agent_ref == domain
+                reward_extra_info[f"{domains[domain]} reward"] = (
+                    float(reward) if is_domain else 0.0
+                )
+                reward_extra_info[f"{domains[domain]} count"] = float(is_domain)
 
         return {"reward_score": reward, "reward_extra_info": reward_extra_info}

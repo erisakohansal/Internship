@@ -33,13 +33,13 @@ export TOKENIZERS_PARALLELISM=false
 REWARD_PATH="$PWD/reward.py"
 echo "Using reward file: $REWARD_PATH"
 test -f "$REWARD_PATH" || { echo "Reward file not found"; exit 1; }
-CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-Domain-RL/checkpoints"
-TRAIN_FILE="$PWD/multi-domain-RL-train.parquet"
-TEST_FILE="$PWD/multi-domain-RL-test.parquet"
+CHECKPOINT_PATH="/project/home/p201382/erisa/Multi-Domain-RL/correct/checkpoints"
+TRAIN_FILE="$PWD/data/multi-domain-RL-train.parquet"
+TEST_FILE="$PWD/data/multi-domain-RL-test.parquet"
 MAX_PROMPT_LEN=5000
 MAX_RESPONSE_LEN=4000                                             
 MAX_MODEL_LEN=$(( MAX_PROMPT_LEN + MAX_RESPONSE_LEN ))  
-MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct} 
+MODEL_PATH=${MODEL_PATH:-Qwen/Qwen2.5-1.5B-Instruct} # "/project/home/p201382/erisa/IF_RL_Binary/"
 
 python3 -m verl.trainer.main_ppo \
   data.train_files="$TRAIN_FILE" \
