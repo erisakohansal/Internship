@@ -4,6 +4,9 @@ import datasets
 from datasets import load_dataset, Dataset
 from collections import defaultdict
 import json
+from transformers import AutoTokenizer
+import yaml
+import numpy as np
 
 import os
 
@@ -218,6 +221,7 @@ def structured_outputs_data(data, idx):
 def format_data_multi_domain(data, idx):
 
     match data["agent_ref"]["name"]:
+
         case "workplace_assistant_simple_agent":
             return workplace_assistant_data(data, idx)
 
@@ -228,7 +232,102 @@ def format_data_multi_domain(data, idx):
             return structured_outputs_data(data, idx)
         
 
-def format_dataset_multi_domain() -> Dataset:
+def add_prompt_length_statistics(
+    dataset,
+    model_path,
+    tool_config_path,
+    max_prompt_length,
+):
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_path,
+        trust_remote_code=True,
+    )
+
+    with open(tool_config_path, "r") as f:
+        tool_config = yaml.safe_load(f)
+
+    tool_schemas = {
+        tool["tool_schema"]["function"]["name"]: tool["tool_schema"]
+        for tool in tool_config["tools"]
+    }
+
+    def compute_prompt_length(row):
+        selected_tools = [
+            tool_schemas[name]
+            for name in row["tool_selection"]
+        ]
+
+        template_kwargs = {
+            "conversation": row["prompt"],
+            "tokenize": True,
+            "add_generation_prompt": True,
+        }
+
+        # Do not pass tools for MCQA or structured outputs.
+        if selected_tools:
+            template_kwargs["tools"] = selected_tools
+
+        input_ids = tokenizer.apply_chat_template(**template_kwargs)["input_ids"]
+
+        return {
+            "prompt_tokens": len(input_ids),
+        }
+
+    dataset = dataset.map(
+        compute_prompt_length,
+        load_from_cache_file=False,
+        desc="Computing rendered prompt lengths",
+    )
+
+    lengths = np.asarray(dataset["prompt_tokens"])
+
+    print("\nPrompt-length statistics:")
+    print("Minimum:", lengths.min())
+    print("Mean:", lengths.mean())
+    print("Median:", np.median(lengths))
+    print("p90:", np.percentile(lengths, 90))
+    print("p95:", np.percentile(lengths, 95))
+    print("p99:", np.percentile(lengths, 99))
+    print("Maximum:", lengths.max())
+
+    too_long = lengths > max_prompt_length
+    print(
+        f"Above {max_prompt_length}:",
+        int(too_long.sum()),
+        f"({too_long.mean():.2%})",
+    )
+
+    print("\nPrompt lengths by domain:")
+    for ability in sorted(set(dataset["ability"])):
+        ability_lengths = np.asarray([
+            length
+            for length, row_ability
+            in zip(dataset["prompt_tokens"], dataset["ability"])
+            if row_ability == ability
+        ])
+
+        print(
+            f"{ability}: "
+            f"count={len(ability_lengths)}, "
+            f"mean={ability_lengths.mean():.1f}, "
+            f"p95={np.percentile(ability_lengths, 95):.0f}, "
+            f"max={ability_lengths.max()}"
+        )
+
+    max_index = int(lengths.argmax())
+    max_row = dataset[max_index]
+
+    print("\nLongest prompt:")
+    print("Dataset index:", max_index)
+    print("Original index:", max_row["extra_info"]["index"])
+    print("Ability:", max_row["ability"])
+    print("Tokens:", max_row["prompt_tokens"])
+    print("Number of tools:", len(max_row["tool_selection"]))
+
+    return dataset
+
+
+def format_dataset_multi_domain(model_path="Qwen/Qwen2.5-1.5B-Instruct", tool_config_path="tools.yaml", max_prompt_length=5000) -> Dataset:
     config = "multi-domain-RL"
     data = load_dataset(
         "nvidia/Nemotron-Cascade-2-RL-data",
@@ -238,25 +337,26 @@ def format_dataset_multi_domain() -> Dataset:
 
     print("Dataset columns : ", data.column_names)
     print("Raw dataset size : ", len(data))
-    print(data[0]["agent_ref"])
 
-
-    dataset = data.map(
+    dataset = dataset.map(
         format_data_multi_domain,
         remove_columns=data.column_names,
         load_from_cache_file=False,
         with_indices=True,
     )
 
-    print(dataset.features)
-    for ability in ["mcqa", "structured_outputs", "workplace_assistant"]:
-        row = next(row for row in dataset if row["ability"] == ability)
-        ground_truth = row["reward_model"]["ground_truth"]
-        print(ability, type(ground_truth), repr(ground_truth)[:200])
+    dataset = add_prompt_length_statistics(
+        dataset=dataset,
+        model_path=model_path,
+        tool_config_path=tool_config_path,
+        max_prompt_length=max_prompt_length,
+    )
 
-    print(dataset[0])
-    print(dataset[0]["prompt"])
-    print(dataset[0]["extra_info"])
+    # print(dataset.features)
+    # for ability in ["mcqa", "structured_outputs", "workplace_assistant"]:
+    #     row = next(row for row in dataset if row["ability"] == ability)
+    #     ground_truth = row["reward_model"]["ground_truth"]
+    #     print(ability, type(ground_truth), repr(ground_truth)[:200])
 
 
     splits = dataset.train_test_split(
